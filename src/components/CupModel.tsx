@@ -172,7 +172,7 @@ function useCeramic() {
       clearcoat: 1,
       clearcoatRoughness: 0.05,
       bumpMap: bump,
-      bumpScale: 0.12,
+      bumpScale: 0.035,
       side: THREE.DoubleSide,
     });
     return m;
@@ -190,7 +190,7 @@ function useCeramic() {
 export function CupBody({ castShadow = true }: { castShadow?: boolean }) {
   const ceramic = useCeramic();
   const body = useMemo(() => new THREE.LatheGeometry(CUP_OUTLINE, 128), []);
-  const handle = useMemo(() => new THREE.TubeGeometry(HANDLE_CURVE, 72, 0.082, 24, false), []);
+  const handle = useMemo(() => new THREE.TubeGeometry(HANDLE_CURVE, 72, 0.072, 24, false), []);
   useEffect(
     () => () => {
       body.dispose();

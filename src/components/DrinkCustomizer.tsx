@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import { useReducedMotion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
@@ -27,40 +27,44 @@ const BuilderScene = dynamic(() => import("./BuilderScene"), { ssr: false });
 
 const COMPACT_QUERY = "(max-width: 1023px)";
 
+let webglSupport: boolean | null = null;
 function detectWebGL() {
-  try {
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
-  } catch {
-    return false;
+  if (webglSupport === null) {
+    try {
+      const c = document.createElement("canvas");
+      webglSupport = !!(c.getContext("webgl2") || c.getContext("webgl"));
+    } catch {
+      webglSupport = false;
+    }
   }
+  return webglSupport;
 }
+const noopSubscribe = () => () => undefined;
 
 /* ---- small building blocks ------------------------------------------ */
 
-const label = "text-white/45 text-[0.65rem] tracking-wider uppercase font-mono";
+const legend = "text-sm font-medium text-[#efe6d6] mb-3";
+const hint = "text-xs text-[#efe6d6]/50 mt-2";
 
 function Choice({
   active,
   onClick,
   children,
-  className = "",
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
-  className?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`border p-3 text-xs tracking-wider font-bold transition-all duration-300 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] ${
+      className={`border px-3 py-3 text-sm font-medium transition-colors duration-200 cursor-pointer ${
         active
-          ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
-          : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
-      } ${className}`}
+          ? "border-[#efe6d6] bg-[#efe6d6] text-[#14100d]"
+          : "border-white/15 text-[#efe6d6]/75 hover:border-white/40"
+      }`}
     >
       {children}
     </button>
@@ -81,7 +85,7 @@ function Stepper({
   name: string;
 }) {
   const base =
-    "w-10 h-10 border flex items-center justify-center transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] disabled:opacity-30 disabled:cursor-not-allowed";
+    "w-10 h-10 border border-white/15 flex items-center justify-center text-lg text-[#efe6d6] hover:border-white/40 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed";
   return (
     <div className="flex items-center gap-3">
       <button
@@ -89,11 +93,11 @@ function Stepper({
         aria-label={`Fewer ${name}`}
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
-        className={`${base} border-white/10 text-white hover:border-white/30 hover:text-[#D4943A]`}
+        className={base}
       >
         −
       </button>
-      <span className="text-white text-sm min-w-[24px] text-center font-mono" aria-live="polite">
+      <span className="text-[#efe6d6] min-w-[24px] text-center tabular-nums" aria-live="polite">
         {value}
       </span>
       <button
@@ -101,7 +105,7 @@ function Stepper({
         aria-label={`More ${name}`}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
-        className={`${base} border-white/10 text-white hover:border-white/30 hover:text-[#D4943A]`}
+        className={base}
       >
         +
       </button>
@@ -119,8 +123,8 @@ function StaticPreview() {
         <ellipse cx="110" cy="50" rx="65" ry="12" fill="#e4dfd4" />
         <ellipse cx="110" cy="53" rx="56" ry="9" fill="#6b4425" />
       </svg>
-      <p className="text-white/40 text-xs max-w-[16rem] leading-relaxed">
-        The live 3D preparation needs WebGL, which isn&apos;t available here. Your selections and price still work.
+      <p className="text-[#efe6d6]/55 text-sm max-w-[16rem] leading-relaxed">
+        The 3D preview needs WebGL, which isn&apos;t available here. Your choices and the price still work.
       </p>
     </div>
   );
@@ -131,11 +135,11 @@ function StaticPreview() {
 export default function DrinkCustomizer() {
   const { addToCart, setCartOpen } = useCart();
   const reduced = !!useReducedMotion();
+  const webgl = useSyncExternalStore(noopSubscribe, detectWebGL, () => true);
 
   const [config, setConfig] = useState<BuilderConfig>(DEFAULT_CONFIG);
   const [stage, setStage] = useState("Preparing");
   const [replayToken, setReplayToken] = useState(0);
-  const [webgl] = useState(() => (typeof document === "undefined" ? true : detectWebGL()));
   const [compact, setCompact] = useState(false);
   const [active, setActive] = useState(true);
 
@@ -192,35 +196,17 @@ export default function DrinkCustomizer() {
   };
 
   return (
-    <section id="customizer" className="relative py-24 md:py-32 bg-[#120C09] overflow-hidden border-t border-white/5">
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#D4943A]/5 rounded-full filter blur-[120px] pointer-events-none" />
+    <section id="customizer" className="relative py-24 lg:py-32 border-t border-white/10">
+      <div className="max-w-6xl mx-auto px-6 md:px-12">
+        <h2 className="display text-4xl md:text-6xl text-[#efe6d6] mb-14">Build your cup</h2>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <span className="text-[#D4943A] text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.3em] block mb-3 font-mono font-bold">
-            Your Cup, Your Way
-          </span>
-          <h2
-            className="text-3xl md:text-5xl text-white font-semibold uppercase tracking-wider"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Build Your Cup
-          </h2>
-          <div className="w-12 h-[1px] bg-[#D4943A] mx-auto mt-4" />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* Left: live preparation scene */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Left: the drink being made */}
           <div className="lg:col-span-5 lg:sticky lg:top-24">
             <div
               id="cup-slot"
               ref={panelRef}
-              className="relative h-[62vh] min-h-[420px] max-h-[600px] border border-white/10 overflow-hidden"
-              style={{
-                background:
-                  "radial-gradient(ellipse 80% 70% at 50% 62%, rgba(212,148,58,0.16), rgba(18,12,9,0) 70%), linear-gradient(#17100c, #120C09)",
-              }}
+              className="relative h-[62vh] min-h-[420px] max-h-[600px] bg-[#1b1511] overflow-hidden"
             >
               {webgl ? (
                 <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
@@ -239,122 +225,97 @@ export default function DrinkCustomizer() {
                 <StaticPreview />
               )}
 
-              {/* overlays keep clear of the product */}
               <div className="absolute top-4 left-4 right-4 flex items-start justify-between pointer-events-none">
-                <div>
-                  <p className="text-white/35 text-[0.62rem] uppercase tracking-widest font-mono">Live preview</p>
-                  {webgl && (
-                    <p className="mt-1 text-[#E3AE62] text-xs font-mono" aria-live="polite">
-                      {stage === "Served" ? "Ready to serve" : stage === "Preparing" ? "Getting ready…" : `${stage}…`}
-                    </p>
-                  )}
-                </div>
+                <p className="text-sm text-[#efe6d6]/70" aria-live="polite">
+                  {!webgl
+                    ? ""
+                    : stage === "Served"
+                      ? "Served"
+                      : stage === "Preparing"
+                        ? "Getting ready"
+                        : stage}
+                </p>
                 {webgl && (
                   <button
                     type="button"
                     onClick={() => setReplayToken((n) => n + 1)}
-                    className="pointer-events-auto border border-white/15 text-white/70 hover:text-[#E3AE62] hover:border-[#D4943A] transition-colors text-[0.65rem] uppercase tracking-widest font-mono px-3 py-2 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] bg-[#120C09]/60"
+                    className="pointer-events-auto text-sm text-[#efe6d6]/80 hover:text-[#d19a4f] underline underline-offset-4 decoration-white/30 cursor-pointer"
                   >
-                    ↻ Replay
+                    Replay
                   </button>
                 )}
               </div>
 
-              <div className="absolute bottom-0 inset-x-0 p-4 pointer-events-none bg-gradient-to-t from-[#120C09] via-[#120C09]/80 to-transparent">
-                {webgl && (
-                  <ol className="flex flex-wrap gap-x-4 gap-y-1 mb-3" aria-label="Preparation steps">
-                    {steps.map((s, i) => {
-                      const state = i < stageIndex || stage === "Served" ? "done" : i === stageIndex ? "now" : "todo";
-                      return (
-                        <li
-                          key={s}
-                          className={`text-[0.6rem] uppercase tracking-widest font-mono transition-colors ${
-                            state === "now" ? "text-[#E3AE62]" : state === "done" ? "text-white/60" : "text-white/20"
-                          }`}
-                        >
-                          {state === "done" ? "✓ " : ""}
-                          {s}
-                        </li>
-                      );
-                    })}
-                  </ol>
-                )}
-                <div className="flex items-end justify-between">
-                  <div>
-                    <span className="text-white/40 text-[0.6rem] tracking-wider uppercase font-mono block">Estimated price</span>
-                    <p className="text-3xl text-white font-semibold font-mono leading-tight">₹{total}</p>
-                  </div>
-                  {webgl && <span className="text-white/25 text-[0.6rem] uppercase tracking-widest font-mono">Drag to turn</span>}
-                </div>
-              </div>
+              {webgl && (
+                <ol className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-x-4 gap-y-1 pointer-events-none" aria-label="Preparation steps">
+                  {steps.map((s, i) => {
+                    const state = i < stageIndex || stage === "Served" ? "done" : i === stageIndex ? "now" : "todo";
+                    return (
+                      <li
+                        key={s}
+                        className={`text-xs transition-colors ${
+                          state === "now" ? "text-[#d19a4f]" : state === "done" ? "text-[#efe6d6]/70" : "text-[#efe6d6]/30"
+                        }`}
+                      >
+                        {s}
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
             </div>
           </div>
 
-          {/* Right: controls */}
-          <div className="lg:col-span-7 space-y-8">
+          {/* Right: choices */}
+          <div className="lg:col-span-7 space-y-9">
             <fieldset>
-              <legend className={`${label} mb-3`}>1. Choose size</legend>
+              <legend className={legend}>Size</legend>
               <div className="grid grid-cols-3 gap-3">
                 {SIZES.map((s) => (
                   <Choice key={s} active={config.size === s} onClick={() => patch({ size: s })}>
-                    {s.toUpperCase()}
+                    {s}
                   </Choice>
                 ))}
               </div>
             </fieldset>
 
             <fieldset>
-              <legend className={`${label} mb-3`}>2. Milk option</legend>
+              <legend className={legend}>Milk</legend>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {MILKS.map((m) => (
-                  <Choice key={m} active={config.milk === m} onClick={() => patch({ milk: m })} className="!text-[10px]">
-                    {m.toUpperCase()}
+                  <Choice key={m} active={config.milk === m} onClick={() => patch({ milk: m })}>
+                    {m.replace(" Milk", "")}
                   </Choice>
                 ))}
               </div>
-              <p className="text-white/30 text-[0.65rem] mt-2 font-mono">Oat, almond and coconut add ₹30.</p>
+              <p className={hint}>Oat, almond and coconut add ₹30.</p>
             </fieldset>
 
             <div>
-              <div className="flex justify-between items-center mb-3">
-                <span className={label}>3. Espresso shots</span>
-                <span className="text-[#D4943A] text-xs font-mono font-bold">
-                  {config.shots} {config.shots === 1 ? "shot" : "shots"}
-                  {config.shots > 1 && <span className="text-white/35 font-normal"> · +₹{(config.shots - 1) * EXTRA_SHOT_PRICE}</span>}
+              <div className="flex justify-between items-baseline mb-3">
+                <span className="text-sm font-medium text-[#efe6d6]">Espresso shots</span>
+                <span className="text-sm text-[#efe6d6]/70 tabular-nums">
+                  {config.shots > 1 ? `+₹${(config.shots - 1) * EXTRA_SHOT_PRICE}` : "Included"}
                 </span>
               </div>
-              <div className="flex items-center gap-4">
-                <Stepper
-                  name="shots"
-                  value={config.shots}
-                  min={SHOTS_MIN}
-                  max={SHOTS_MAX}
-                  onChange={(v) => patch({ shots: v })}
-                />
-                <div className="flex-1 h-[2px] bg-white/10 relative">
-                  <div
-                    className="absolute top-0 left-0 h-full bg-[#D4943A] transition-[width] duration-300"
-                    style={{ width: `${(config.shots / SHOTS_MAX) * 100}%` }}
-                  />
-                </div>
-              </div>
-              <p className="text-white/30 text-[0.65rem] mt-2 font-mono">First shot is included; extra shots are ₹{EXTRA_SHOT_PRICE} each.</p>
+              <Stepper name="shots" value={config.shots} min={SHOTS_MIN} max={SHOTS_MAX} onChange={(v) => patch({ shots: v })} />
+              <p className={hint}>The first shot is included; extra shots are ₹{EXTRA_SHOT_PRICE} each.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="syrup" className={`${label} block mb-3`}>
-                  4. Syrup choice
+                <label htmlFor="syrup" className={`${legend} block`}>
+                  Syrup
                 </label>
                 <select
                   id="syrup"
                   value={config.syrup}
                   onChange={(e) => patch({ syrup: e.target.value as BuilderConfig["syrup"] })}
-                  className="w-full bg-[#180F0B] border border-white/10 text-white text-xs tracking-wider p-3 focus:outline-none focus:border-[#D4943A] rounded-none cursor-pointer"
+                  className="w-full bg-[#14100d] border border-white/15 text-[#efe6d6] text-sm p-3 focus:outline-none focus:border-[#d19a4f] rounded-none cursor-pointer"
                 >
                   {SYRUPS.map((s) => (
                     <option key={s} value={s}>
-                      {s.toUpperCase()}
+                      {s}
                     </option>
                   ))}
                 </select>
@@ -362,31 +323,23 @@ export default function DrinkCustomizer() {
 
               {config.syrup !== "None" && (
                 <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className={label}>Syrup pumps</span>
-                    <span className="text-[#D4943A] text-xs font-mono font-bold">
-                      +₹{config.pumps * PUMP_PRICE}
-                    </span>
+                  <div className="flex justify-between items-baseline mb-3">
+                    <span className="text-sm font-medium text-[#efe6d6]">Pumps</span>
+                    <span className="text-sm text-[#efe6d6]/70 tabular-nums">+₹{config.pumps * PUMP_PRICE}</span>
                   </div>
-                  <Stepper
-                    name="pumps"
-                    value={config.pumps}
-                    min={PUMPS_MIN}
-                    max={PUMPS_MAX}
-                    onChange={(v) => patch({ pumps: v })}
-                  />
+                  <Stepper name="pumps" value={config.pumps} min={PUMPS_MIN} max={PUMPS_MAX} onChange={(v) => patch({ pumps: v })} />
                 </div>
               )}
             </div>
 
             <fieldset>
-              <legend className={`${label} mb-3`}>5. Add toppings</legend>
+              <legend className={legend}>Toppings</legend>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {(
                   [
-                    ["cream", "FRESH CREAM", TOPPING_PRICE.cream],
-                    ["drizzle", "JAGGERY DRIZZLE", TOPPING_PRICE.drizzle],
-                    ["cinnamon", "CINNAMON", TOPPING_PRICE.cinnamon],
+                    ["cream", "Fresh cream", TOPPING_PRICE.cream],
+                    ["drizzle", "Jaggery drizzle", TOPPING_PRICE.drizzle],
+                    ["cinnamon", "Cinnamon", TOPPING_PRICE.cinnamon],
                   ] as const
                 ).map(([key, text, price]) => (
                   <button
@@ -394,39 +347,35 @@ export default function DrinkCustomizer() {
                     type="button"
                     aria-pressed={config[key]}
                     onClick={() => patch({ [key]: !config[key] } as Partial<BuilderConfig>)}
-                    className={`border px-3 py-4 text-[11px] tracking-wider transition-all duration-300 flex items-center justify-between cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] ${
+                    className={`border px-3 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between gap-2 cursor-pointer ${
                       config[key]
-                        ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
-                        : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
+                        ? "border-[#efe6d6] bg-[#efe6d6] text-[#14100d]"
+                        : "border-white/15 text-[#efe6d6]/75 hover:border-white/40"
                     }`}
                   >
                     <span className="text-left">{text}</span>
-                    <span className="text-[9px] font-mono opacity-80 whitespace-nowrap pl-2">+₹{price}</span>
+                    <span className="text-xs tabular-nums opacity-70 whitespace-nowrap">+₹{price}</span>
                   </button>
                 ))}
               </div>
             </fieldset>
 
-            {/* price breakdown + CTA */}
-            <div className="border border-white/10 p-5">
-              <ul className="space-y-1.5 mb-4">
+            {/* total and add */}
+            <div className="border-t border-white/15 pt-6">
+              <ul className="space-y-1.5 mb-5">
                 {lines.map((l) => (
-                  <li key={l.label} className="flex justify-between text-xs">
-                    <span className="text-white/55">{l.label}</span>
-                    <span className="text-white/80 font-mono">₹{l.amount}</span>
+                  <li key={l.label} className="flex justify-between text-sm">
+                    <span className="text-[#efe6d6]/65">{l.label}</span>
+                    <span className="text-[#efe6d6]/85 tabular-nums">₹{l.amount}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex justify-between items-baseline border-t border-white/10 pt-3 mb-5">
-                <span className="text-white text-xs uppercase tracking-widest font-mono">Total</span>
-                <span className="text-[#E3AE62] text-xl font-mono font-semibold">₹{total}</span>
+              <div className="flex justify-between items-baseline mb-6">
+                <span className="text-sm font-medium text-[#efe6d6]">Total</span>
+                <span className="display text-3xl text-[#efe6d6] tabular-nums">₹{total}</span>
               </div>
-              <button
-                type="button"
-                onClick={handleAddToOrder}
-                className="w-full btn-cta text-center justify-center font-bold text-xs tracking-widest py-4 cursor-pointer"
-              >
-                ADD MY CUP TO ORDER · ₹{total}
+              <button type="button" onClick={handleAddToOrder} className="btn w-full justify-center py-4">
+                Add to order
               </button>
             </div>
           </div>

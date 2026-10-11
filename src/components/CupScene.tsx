@@ -38,24 +38,24 @@ interface KeyDef {
 }
 
 const DESKTOP_KEYS: KeyDef[] = [
-  // hero: big, right of the headline, leaning clockwise
+  // hero: large, right of the headline, leaning clockwise
   { sel: "#home", edge: "top", vp: 0, x: 0.43, y: 0.0, s: 1.0, rz: -13, rx: 20, ry: -30 },
-  // story: zig-zag opposite each text block
-  { sel: '[data-cup="story-0"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.78, rz: -10, rx: 20, ry: 24 },
-  { sel: '[data-cup="story-1"]', edge: "center", vp: 0.5, x: -0.55, y: 0, s: 0.78, rz: 10, rx: 20, ry: 168 },
-  { sel: '[data-cup="story-2"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.78, rz: -10, rx: 20, ry: 336 },
+  // story: opposite each passage; the handle stays on the right throughout,
+  // so the only things that change are place and size
+  { sel: '[data-cup="story-0"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.8, rz: -10, rx: 20, ry: -24 },
+  { sel: '[data-cup="story-1"]', edge: "center", vp: 0.5, x: -0.55, y: 0, s: 0.8, rz: -10, rx: 20, ry: -34 },
+  { sel: '[data-cup="story-2"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.8, rz: -10, rx: 20, ry: -24 },
   // menu: right lane
-  { sel: "#menu", edge: "center", vp: 0.5, x: 0.6, y: 0, s: 0.88, rz: -14, rx: 22, ry: 392 },
-  // customizer: glides to the preview panel, then hands over to the panel's own
-  // scene (which shows the drink being prepared) by shrinking out
-  { sel: "#cup-slot", edge: "center", vp: 0.9, x: -0.5, y: 0, s: 0.8, rz: -4, rx: 26, ry: 430, anchorX: true },
-  { sel: "#cup-slot", edge: "center", vp: 0.62, x: -0.5, y: 0, s: 0.001, rz: -4, rx: 26, ry: 460, anchorX: true },
+  { sel: "#menu", edge: "center", vp: 0.5, x: 0.6, y: 0, s: 0.88, rz: -11, rx: 22, ry: -28 },
+  // customizer: glides to the panel, then hands over to the panel's own scene
+  { sel: "#cup-slot", edge: "center", vp: 0.9, x: -0.5, y: 0, s: 0.8, rz: -8, rx: 26, ry: -30, anchorX: true },
+  { sel: "#cup-slot", edge: "center", vp: 0.62, x: -0.5, y: 0, s: 0.001, rz: -8, rx: 26, ry: -30, anchorX: true },
   // gallery: left lane
-  { sel: "#gallery", edge: "center", vp: 0.5, x: -0.6, y: 0, s: 0.8, rz: 11, rx: 20, ry: 500 },
+  { sel: "#gallery", edge: "center", vp: 0.5, x: -0.6, y: 0, s: 0.8, rz: -9, rx: 20, ry: -34 },
   // rituals: right lane
-  { sel: "#rituals", edge: "center", vp: 0.5, x: 0.6, y: 0, s: 0.8, rz: -12, rx: 20, ry: 570 },
-  // about: left, where the photo used to be
-  { sel: '[data-cup="about"]', edge: "center", vp: 0.5, x: -0.5, y: 0, s: 0.88, rz: -6, rx: 22, ry: 640, anchorX: true },
+  { sel: "#rituals", edge: "center", vp: 0.5, x: 0.6, y: 0, s: 0.8, rz: -10, rx: 20, ry: -26 },
+  // about: left, where the photo is on small screens
+  { sel: '[data-cup="about"]', edge: "center", vp: 0.5, x: -0.5, y: 0, s: 0.88, rz: -8, rx: 22, ry: -30, anchorX: true },
 ];
 
 /*
@@ -186,9 +186,9 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
 
     // --- idle (only a breath of motion) ----------------------------
     const time = reducedMotion ? 0 : fs.clock.elapsedTime;
-    const bob = Math.sin(time * 0.8) * 0.02;
-    const sway = Math.sin(time * 0.55) * 0.012;
-    const turn = Math.sin(time * 0.35) * 0.035;
+    const bob = Math.sin(time * 0.6) * 0.008;
+    const sway = Math.sin(time * 0.45) * 0.005;
+    const turn = 0;
 
     // --- viewport -> world -----------------------------------------
     const aspect = fs.size.width / fs.size.height;

@@ -49,7 +49,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // Add toast notification
     const toastId = Date.now();
-    setToasts((prev) => [...prev, { id: toastId, message: `Added ${item.name} to order!` }]);
+    setToasts((prev) => [...prev, { id: toastId, message: `${item.name} added` }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== toastId));
     }, 3000);

@@ -420,7 +420,7 @@ function Scene({ cfgRef, cream: withCream, replayToken, reducedMotion, mobile, o
     if (!S.drag) {
       S.yawVel *= Math.exp(-4 * dt);
       S.yaw += S.yawVel * 0.0;
-      const rest = 0.5 + (reducedMotion ? 0 : Math.sin(fs.clock.elapsedTime * 0.3) * 0.04);
+      const rest = 0.5;
       S.yaw += (rest - S.yaw) * (1 - Math.exp(-0.6 * dt));
     }
     cupGroup.current.rotation.y = S.yaw;

@@ -59,7 +59,7 @@ npm run build && npm start
 | `src/components/CupStage.tsx` | Fixed canvas host, WebGL detection, error boundary |
 | `src/components/HeroCanvas.tsx` | Hero section: headline and static fallback |
 | `src/lib/cupStore.ts` | Non-reactive bridge between the cup builder and the scene |
-| `src/data/*.ts` | Menu, gallery and ritual copy |
+| `src/data/*.ts` | Menu and gallery content |
 | `src/context/CartContext.tsx` | Cart state and toasts |
 
 ## Credits

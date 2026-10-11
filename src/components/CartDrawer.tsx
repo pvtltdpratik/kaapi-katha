@@ -1,280 +1,183 @@
 "use client";
 
-import { formatINR, parsePrice } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { formatINR, parsePrice } from "@/lib/utils";
 
 export default function CartDrawer() {
-  const {
-    cart,
-    cartTotal,
-    isCartOpen,
-    setCartOpen,
-    updateQuantity,
-    removeFromCart,
-    clearCart,
-  } = useCart();
+  const { cart, cartTotal, isCartOpen, setCartOpen, updateQuantity, removeFromCart, clearCart } = useCart();
 
-  const [checkoutStep, setCheckoutStep] = useState<"cart" | "processing" | "success">("cart");
-  const [orderNumber, setOrderNumber] = useState("");
+  const [placed, setPlaced] = useState<string | null>(null);
 
-  const handleCheckout = () => {
-    setCheckoutStep("processing");
-    // Generate a mock order number
-    const mockOrderNum = "KK-" + Math.floor(100000 + Math.random() * 900000);
-    setOrderNumber(mockOrderNum);
+  // the order summary needs the lines that were just placed, so keep a copy
+  const [receipt, setReceipt] = useState<typeof cart>([]);
+  const [receiptTotal, setReceiptTotal] = useState(0);
 
-    // Simulate brewing / processing
-    setTimeout(() => {
-      setCheckoutStep("success");
-    }, 2500);
-  };
-
-  const closeCart = () => {
+  const close = () => {
     setCartOpen(false);
-    // Reset checkout step after drawer closes
-    setTimeout(() => {
-      setCheckoutStep("cart");
-    }, 500);
+    window.setTimeout(() => setPlaced(null), 300);
   };
 
-  const handleSuccessClose = () => {
+  useEffect(() => {
+    if (!isCartOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setCartOpen(false);
+        window.setTimeout(() => setPlaced(null), 300);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isCartOpen, setCartOpen]);
+
+  const placeOrder = () => {
+    setReceipt(cart);
+    setReceiptTotal(cartTotal);
+    setPlaced("KK-" + Math.floor(100000 + Math.random() * 900000));
     clearCart();
-    closeCart();
   };
 
   return (
     <AnimatePresence>
       {isCartOpen && (
         <>
-          {/* Backdrop Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={checkoutStep === "processing" ? undefined : closeCart}
-            className="fixed inset-0 bg-[#120C09]/80 backdrop-blur-sm z-[70] cursor-pointer"
+            onClick={close}
+            className="fixed inset-0 bg-black/60 z-[70] cursor-pointer"
           />
 
-          {/* Drawer Panel */}
-          <motion.div
+          <motion.aside
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-screen w-full sm:w-[480px] bg-[#180F0B]/95 border-l border-white/5 z-[80] shadow-2xl flex flex-col backdrop-blur-xl"
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed top-0 right-0 h-screen w-full sm:w-[440px] bg-[#1b1511] border-l border-white/10 z-[80] flex flex-col"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Your order"
           >
-            {checkoutStep === "cart" && (
+            <div className="px-6 md:px-8 py-6 border-b border-white/10 flex items-center justify-between">
+              <h2 className="display text-2xl text-[#efe6d6]">{placed ? "Order placed" : "Your order"}</h2>
+              <button
+                type="button"
+                onClick={close}
+                className="text-sm text-[#efe6d6]/70 hover:text-[#efe6d6] cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+
+            {!placed && (
               <>
-                {/* Header */}
-                <div className="p-6 md:p-8 border-b border-white/5 flex items-center justify-between">
-                  <div>
-                    <h2
-                      className="text-xl text-white font-semibold uppercase tracking-wider"
-                      style={{ fontFamily: "var(--font-display)" }}
-                    >
-                      Your Order
-                    </h2>
-                    <p className="text-white/40 text-[0.65rem] uppercase tracking-widest mt-1" style={{ fontFamily: "var(--font-mono)" }}>
-                      Kaapi Katha
-                    </p>
-                  </div>
-                  <button
-                    onClick={closeCart}
-                    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/20 transition-all duration-300 cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Items List */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+                <div className="flex-1 overflow-y-auto px-6 md:px-8">
                   {cart.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-                      <div className="text-[#D4943A] text-4xl">☕</div>
-                      <p className="text-white/40 text-sm" style={{ fontFamily: "var(--font-inter)" }}>
-                        Nothing here yet.<br />Pick something from the counter to begin.
-                      </p>
-                    </div>
+                    <p className="text-[#efe6d6]/60 text-sm pt-10 leading-relaxed">
+                      Nothing here yet. Pick something from the menu, or build your own cup.
+                    </p>
                   ) : (
-                    cart.map((item) => (
-                      <motion.div
-                        key={item.item.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-4 relative group"
-                      >
-                        {/* Item Thumbnail */}
-                        <div
-                          className="w-16 h-16 bg-[#1D130E] shrink-0"
-                          style={{
-                            backgroundImage: `url(${item.item.image})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                          }}
-                        />
-
-                        {/* Details */}
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-white text-sm font-medium truncate" style={{ fontFamily: "var(--font-inter)" }}>
-                            {item.item.name}
-                          </h4>
-                          <p className="text-[#D4943A] text-[0.65rem] uppercase tracking-widest mt-0.5" style={{ fontFamily: "var(--font-mono)" }}>
-                            {item.item.price}
-                          </p>
-                          {item.item.config && (
-                            <p className="text-white/40 text-[0.65rem] leading-snug mt-1 line-clamp-3">
-                              {item.item.subtitle}
-                            </p>
-                          )}
-
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-3 mt-3">
-                            <button
-                              onClick={() => updateQuantity(item.item.id, item.quantity - 1)}
-                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#D4943A] transition-colors cursor-pointer text-xs"
-                            >
-                              -
-                            </button>
-                            <span className="text-white text-xs font-medium min-w-[12px] text-center" style={{ fontFamily: "var(--font-mono)" }}>
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => updateQuantity(item.item.id, item.quantity + 1)}
-                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#D4943A] transition-colors cursor-pointer text-xs"
-                            >
-                              +
-                            </button>
+                    <ul>
+                      {cart.map(({ item, quantity }) => (
+                        <li key={item.id} className="py-5 border-b border-white/10 flex gap-4">
+                          <div
+                            className="w-16 h-16 shrink-0 bg-[#14100d]"
+                            style={{
+                              backgroundImage: `url(${item.image})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between gap-3">
+                              <h3 className="text-[#efe6d6] text-sm font-medium">{item.name}</h3>
+                              <span className="text-[#efe6d6] text-sm tabular-nums">
+                                {formatINR(parsePrice(item.price) * quantity)}
+                              </span>
+                            </div>
+                            {item.config && (
+                              <p className="text-xs text-[#efe6d6]/55 mt-1 leading-snug">{item.subtitle}</p>
+                            )}
+                            <div className="flex items-center justify-between mt-3">
+                              <div className="flex items-center gap-3 text-sm text-[#efe6d6]">
+                                <button
+                                  type="button"
+                                  aria-label={`Fewer ${item.name}`}
+                                  onClick={() => updateQuantity(item.id, quantity - 1)}
+                                  className="w-7 h-7 border border-white/15 hover:border-white/40 cursor-pointer"
+                                >
+                                  −
+                                </button>
+                                <span className="tabular-nums w-4 text-center">{quantity}</span>
+                                <button
+                                  type="button"
+                                  aria-label={`More ${item.name}`}
+                                  onClick={() => updateQuantity(item.id, quantity + 1)}
+                                  className="w-7 h-7 border border-white/15 hover:border-white/40 cursor-pointer"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeFromCart(item.id)}
+                                className="text-xs text-[#efe6d6]/50 hover:text-[#d19a4f] cursor-pointer"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
-                        </div>
-
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => removeFromCart(item.item.id)}
-                          className="text-white/20 hover:text-red-400 absolute top-4 right-4 transition-colors cursor-pointer"
-                        >
-                          ✕
-                        </button>
-                      </motion.div>
-                    ))
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
 
-                {/* Footer / Total */}
                 {cart.length > 0 && (
-                  <div className="p-6 md:p-8 border-t border-white/5 bg-white/[0.01]">
-                    <div className="flex items-center justify-between mb-6">
-                      <span className="text-white/40 text-xs uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>
-                        Subtotal
-                      </span>
-                      <span className="text-white text-2xl font-semibold" style={{ fontFamily: "var(--font-mono)" }}>
-                        {formatINR(cartTotal)}
-                      </span>
+                  <div className="px-6 md:px-8 py-6 border-t border-white/10">
+                    <div className="flex justify-between items-baseline mb-5">
+                      <span className="text-sm text-[#efe6d6]/70">Subtotal</span>
+                      <span className="display text-3xl text-[#efe6d6] tabular-nums">{formatINR(cartTotal)}</span>
                     </div>
-
-                    <button
-                      onClick={handleCheckout}
-                      className="w-full btn-cta text-center justify-center font-bold text-xs tracking-widest py-4 cursor-pointer"
-                    >
-                      PLACE ORDER
+                    <button type="button" onClick={placeOrder} className="btn w-full justify-center py-4">
+                      Place order
                     </button>
+                    <p className="text-xs text-[#efe6d6]/45 mt-3">Demo only. Nothing is charged or made.</p>
                   </div>
                 )}
               </>
             )}
 
-            {checkoutStep === "processing" && (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6">
-                <div className="relative w-24 h-24 flex items-center justify-center">
-                  {/* Spinning Ring */}
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                    className="absolute inset-0 border-2 border-transparent border-t-[#D4943A] rounded-full"
-                  />
-                  <span className="text-3xl">☕</span>
+            {placed && (
+              <div className="flex-1 overflow-y-auto px-6 md:px-8 py-8 flex flex-col">
+                <p className="text-sm text-[#efe6d6]/60">Order {placed}</p>
+                <ul className="mt-6 space-y-2">
+                  {receipt.map((c) => (
+                    <li key={c.item.id} className="flex justify-between text-sm">
+                      <span className="text-[#efe6d6]/80">
+                        {c.item.name} <span className="text-[#efe6d6]/45">× {c.quantity}</span>
+                      </span>
+                      <span className="text-[#efe6d6] tabular-nums">
+                        {formatINR(parsePrice(c.item.price) * c.quantity)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex justify-between items-baseline border-t border-white/15 mt-5 pt-4">
+                  <span className="text-sm text-[#efe6d6]/70">Total</span>
+                  <span className="display text-2xl text-[#efe6d6] tabular-nums">{formatINR(receiptTotal)}</span>
                 </div>
-                <div>
-                  <h3 className="text-white text-lg font-semibold tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-                    Pouring your order...
-                  </h3>
-                  <p className="text-white/40 text-xs mt-2 max-w-xs leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>
-                    Decoction on, milk warming. This is a demo, so nothing is actually being made.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {checkoutStep === "success" && (
-              <div className="flex-1 flex flex-col p-6 md:p-8 justify-between overflow-y-auto">
-                <div className="my-auto space-y-8 text-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-                    className="w-20 h-20 bg-[#D4943A]/10 border border-[#D4943A] rounded-full flex items-center justify-center mx-auto"
-                  >
-                    <span className="text-[#D4943A] text-3xl">✓</span>
-                  </motion.div>
-
-                  <div>
-                    <h3 className="text-white text-2xl font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-                      Order Poured
-                    </h3>
-                    <p className="text-white/40 text-xs mt-2" style={{ fontFamily: "var(--font-mono)" }}>
-                      Order ID: {orderNumber}
-                    </p>
-                  </div>
-
-                  {/* Receipt Summary */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-[#1C1C1C] border border-white/5 p-6 text-left space-y-4 max-w-sm mx-auto"
-                  >
-                    <div className="border-b border-white/5 pb-3">
-                      <p className="text-[#D4943A] text-[0.6rem] uppercase tracking-widest font-bold" style={{ fontFamily: "var(--font-mono)" }}>
-                        RECEIPT SUMMARY
-                      </p>
-                    </div>
-
-                    <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
-                      {cart.map((c) => (
-                        <div key={c.item.id} className="flex justify-between text-xs">
-                          <span className="text-white/60 truncate max-w-[200px]" style={{ fontFamily: "var(--font-inter)" }}>
-                            {c.item.name} <span className="text-white/30 text-[10px]">x{c.quantity}</span>
-                          </span>
-                          <span className="text-white/80" style={{ fontFamily: "var(--font-mono)" }}>
-                            {formatINR(parsePrice(c.item.price) * c.quantity)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="border-t border-white/5 pt-3 flex justify-between font-medium">
-                      <span className="text-white text-xs uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>Total</span>
-                      <span className="text-[#D4943A] text-sm" style={{ fontFamily: "var(--font-mono)" }}>{formatINR(cartTotal)}</span>
-                    </div>
-                  </motion.div>
-
-                  <p className="text-white/30 text-xs max-w-xs mx-auto leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>
-                    Kaapi Katha is a fictional café concept. No payment was taken and nothing will be delivered.
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleSuccessClose}
-                  className="w-full btn-cta text-center justify-center font-bold text-xs tracking-widest py-4 cursor-pointer mt-6"
-                >
-                  DONE
+                <p className="text-sm text-[#efe6d6]/55 mt-8 leading-relaxed">
+                  Kaapi Katha is a fictional café. No payment was taken and nothing will be delivered.
+                </p>
+                <button type="button" onClick={close} className="btn justify-center mt-auto py-4">
+                  Done
                 </button>
               </div>
             )}
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
