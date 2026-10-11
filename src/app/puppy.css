@@ -7,16 +7,17 @@
    ===================================================================== */
 .pup-dock {
   position: fixed;
-  left: 0.75rem;
-  bottom: 0.75rem;
+  left: 0;
+  top: 0;
   z-index: 60; /* above the page-wide cup (20) and hero copy (30), below the cart (70+) */
   pointer-events: none;
+  /* --px / --py are written by the roaming loop; the fallback is bottom-left */
+  transform: translate3d(var(--px, 12px), var(--py, calc(100svh - 112px)), 0);
+  will-change: transform;
 }
-@media (min-width: 640px) {
-  .pup-dock {
-    left: 1.5rem;
-    bottom: 1.5rem;
-  }
+/* used briefly when the menu opens and the puppy has to make room for it */
+.pup-dock[data-snap="true"] {
+  transition: transform 0.4s cubic-bezier(0.3, 1.2, 0.5, 1);
 }
 
 .pup-badge {
@@ -25,36 +26,35 @@
   display: block;
   width: 84px;
   height: 84px;
-  padding: 5px;
-  border-radius: 9999px;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  background: radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.95), rgba(230, 243, 218, 0.82));
-  box-shadow: 0 10px 26px rgba(50, 40, 20, 0.28);
+  padding: 0;
+  border: 0;
+  border-radius: 9999px; /* only shapes the keyboard focus ring */
+  background: transparent;
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 @media (min-width: 768px) {
   .pup-badge {
-    width: 116px;
-    height: 116px;
-    padding: 7px;
+    width: 112px;
+    height: 112px;
   }
 }
 .pup-badge:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 .pup-badge:active {
   transform: scale(0.96);
 }
 .pup-badge:focus-visible {
   outline: 3px solid #c8322b;
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 .pup-art {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
+  filter: drop-shadow(0 7px 8px rgba(40, 25, 10, 0.3));
 }
 
 .pup-count {
@@ -100,6 +100,15 @@
   opacity: 1;
   transform: none;
 }
+.pup-dock[data-h="right"] .pup-bubble {
+  left: auto;
+  right: calc(100% + 10px);
+  transform: translateX(6px) scale(0.96);
+  transform-origin: right center;
+}
+.pup-dock[data-h="right"] .pup-bubble[data-show="true"] {
+  transform: none;
+}
 
 .pup-panel {
   position: absolute;
@@ -114,6 +123,8 @@
   backdrop-filter: blur(14px);
   box-shadow: 0 18px 40px rgba(50, 40, 20, 0.25);
   color: #2d2a22;
+  max-height: calc(100svh - 1.5rem);
+  overflow-y: auto;
   transform-origin: bottom left;
   /* closed: out of hit-testing and out of the tab order */
   visibility: hidden;
@@ -121,7 +132,24 @@
   transform: translateY(10px) scale(0.96);
   transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.3, 1.3, 0.5, 1), visibility 0s linear 0.25s;
 }
-.pup-panel[data-open="true"] {
+.pup-dock[data-v="down"] .pup-panel {
+  bottom: auto;
+  top: calc(100% + 12px);
+  transform-origin: top left;
+  transform: translateY(-10px) scale(0.96);
+}
+.pup-dock[data-h="right"] .pup-panel {
+  left: auto;
+  right: 0;
+}
+.pup-dock[data-h="right"][data-v="up"] .pup-panel {
+  transform-origin: bottom right;
+}
+.pup-dock[data-h="right"][data-v="down"] .pup-panel {
+  transform-origin: top right;
+}
+.pup-panel[data-open="true"],
+.pup-dock[data-v="down"] .pup-panel[data-open="true"] {
   visibility: visible;
   opacity: 1;
   transform: none;
@@ -234,6 +262,48 @@
 }
 
 /* ---- the puppy itself: every part has its own motion ---- */
+.pup[data-face="left"] {
+  transform: scaleX(-1);
+}
+.pup[data-walk="true"] .pup-body-wrap {
+  animation: pup-hop 0.34s ease-in-out infinite;
+}
+.pup[data-walk="true"] .pup-tail {
+  animation: pup-tail-wag 0.22s ease-in-out infinite;
+}
+.pup[data-walk="true"] .pup-ear-l {
+  animation: pup-ear-flap-l 0.34s ease-in-out infinite;
+}
+.pup[data-walk="true"] .pup-ear-r {
+  animation: pup-ear-flap-r 0.34s ease-in-out infinite;
+}
+@keyframes pup-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+  50% {
+    transform: translateY(-13px) scale(0.97, 1.04);
+  }
+}
+@keyframes pup-ear-flap-l {
+  0%,
+  100% {
+    transform: rotate(2deg);
+  }
+  50% {
+    transform: rotate(-11deg);
+  }
+}
+@keyframes pup-ear-flap-r {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(11deg);
+  }
+}
 .pup * {
   transform-box: fill-box;
 }

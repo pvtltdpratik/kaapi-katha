@@ -7,6 +7,11 @@ import Puppy from "./PuppyCompanion";
 /*
  * Puppy companion navigation (replaces the old header).
  *
+ * The puppy roams the screen on its own: it sits for a few seconds, trots to a
+ * new spot (mostly along the edges, so it rarely rests on content), and sits
+ * again. It stops whenever you hover, focus, or open the menu, so it is never a
+ * moving target, and the menu and speech bubble travel with it.
+ *
  * Interaction rule: the dock wrapper never receives pointer events. Only the
  * puppy button and the open menu panel opt back in, and the closed panel is
  * visibility:hidden, so nothing here can sit invisibly over the page.
@@ -63,6 +68,10 @@ const BURST = Array.from({ length: 7 }, (_, i) => ({
   kind: i % 2 === 0 ? "heart" : "spark",
 }));
 
+const PANEL_H = 440; // generous upper bound of the open menu's height
+const PANEL_W = 272;
+const EDGE = 10;
+
 export default function PuppyNav() {
   const { cartCount, setCartOpen } = useCart();
 
@@ -78,6 +87,17 @@ export default function PuppyNav() {
   const happyTimer = useRef<number | undefined>(undefined);
   const msgTimer = useRef<number | undefined>(undefined);
   const touched = useRef(false);
+
+  // roaming state: plain mutable data, never React state
+  const roam = useRef({
+    x: 12,
+    y: 0,
+    size: 100,
+    paused: false,
+    hovering: false,
+    focused: false,
+    openMenu: false,
+  });
 
   const setMood = useCallback((mood: "idle" | "happy", ms = 0) => {
     const svg = svgRef.current;
@@ -99,7 +119,6 @@ export default function PuppyNav() {
     if (ms > 0) msgTimer.current = window.setTimeout(() => setShowMsg(false), ms);
   }, []);
 
-  // first greeting fades away on its own
   useEffect(() => {
     msgTimer.current = window.setTimeout(() => {
       if (!touched.current) setShowMsg(false);
@@ -110,7 +129,119 @@ export default function PuppyNav() {
     };
   }, []);
 
-  // idle life: irregular blinks and little head tilts (skipped for reduced motion)
+  /* ---- position helpers (write straight to the DOM) -------------------- */
+  const place = useCallback((x: number, y: number) => {
+    const dock = dockRef.current;
+    if (!dock) return;
+    const R = roam.current;
+    const maxX = Math.max(EDGE, window.innerWidth - R.size - EDGE);
+    const maxY = Math.max(EDGE, window.innerHeight - R.size - EDGE);
+    R.x = Math.min(Math.max(x, EDGE), maxX);
+    R.y = Math.min(Math.max(y, EDGE), maxY);
+    dock.style.setProperty("--px", `${R.x.toFixed(1)}px`);
+    dock.style.setProperty("--py", `${R.y.toFixed(1)}px`);
+    // which side the menu and bubble should open towards
+    const h = R.x + R.size / 2 > window.innerWidth / 2 ? "right" : "left";
+    const spaceUp = R.y;
+    const spaceDown = window.innerHeight - (R.y + R.size);
+    const v = spaceUp >= PANEL_H || spaceUp >= spaceDown ? "up" : "down";
+    if (dock.dataset.h !== h) dock.dataset.h = h;
+    if (dock.dataset.v !== v) dock.dataset.v = v;
+  }, []);
+
+  // initial spot (bottom-left) and keeping inside the viewport on resize
+  useEffect(() => {
+    const R = roam.current;
+    const measure = () => {
+      R.size = buttonRef.current?.getBoundingClientRect().width || 100;
+    };
+    measure();
+    place(12, window.innerHeight - R.size - 12);
+    const onResize = () => {
+      measure();
+      place(R.x, R.y);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [place]);
+
+  /* ---- roaming loop ----------------------------------------------------- */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const R = roam.current;
+    let raf = 0;
+    let last = performance.now();
+    let mode: "sit" | "walk" = "sit";
+    let until = last + 3500; // first wander after a short while
+    let tx = R.x;
+    let ty = R.y;
+
+    // (no document.hidden check: rAF is already suspended in background tabs)
+    const isPaused = () => R.openMenu || R.hovering || R.focused;
+
+    const pickTarget = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const maxX = Math.max(EDGE, vw - R.size - EDGE);
+      const maxY = Math.max(EDGE, vh - R.size - EDGE);
+      // mostly rest along the side margins, sometimes cross the middle
+      const r = Math.random();
+      let x: number;
+      if (r < 0.4) x = EDGE + Math.random() * Math.min(60, maxX);
+      else if (r < 0.8) x = maxX - Math.random() * Math.min(60, maxX);
+      else x = EDGE + Math.random() * maxX;
+      const y = EDGE + Math.random() * maxY;
+      // keep trips worth taking
+      if (Math.hypot(x - R.x, y - R.y) < 140) return pickTarget();
+      tx = x;
+      ty = y;
+    };
+
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const svg = svgRef.current;
+      if (!svg) return;
+
+      if (isPaused()) {
+        if (mode === "walk") {
+          mode = "sit";
+          svg.dataset.walk = "false";
+        }
+        until = now + 1500; // wait a beat after the user lets go
+        return;
+      }
+
+      if (mode === "sit") {
+        if (now >= until) {
+          pickTarget();
+          mode = "walk";
+          svg.dataset.walk = "true";
+          svg.dataset.face = tx < R.x ? "left" : "right";
+        }
+        return;
+      }
+
+      // walk: constant trot towards the target
+      const dx = tx - R.x;
+      const dy = ty - R.y;
+      const dist = Math.hypot(dx, dy);
+      const step = 150 * dt;
+      if (dist <= step) {
+        place(tx, ty);
+        mode = "sit";
+        svg.dataset.walk = "false";
+        until = now + 3500 + Math.random() * 4500;
+      } else {
+        place(R.x + (dx / dist) * step, R.y + (dy / dist) * step);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [place]);
+
+  /* ---- idle life: irregular blinks and head tilts ---------------------- */
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let blinkT: number;
@@ -122,7 +253,6 @@ export default function PuppyNav() {
         window.setTimeout(() => {
           if (svgRef.current) svgRef.current.dataset.blink = "false";
         }, 140);
-        // sometimes a quick double blink
         if (Math.random() < 0.25) {
           window.setTimeout(() => {
             if (svgRef.current) svgRef.current.dataset.blink = "true";
@@ -136,7 +266,7 @@ export default function PuppyNav() {
     };
     const tilt = () => {
       const svg = svgRef.current;
-      if (svg && svg.dataset.mood !== "happy") {
+      if (svg && svg.dataset.mood !== "happy" && svg.dataset.walk !== "true") {
         const r = Math.random();
         svg.dataset.tilt = r < 0.35 ? "left" : r < 0.7 ? "right" : "none";
       }
@@ -150,7 +280,7 @@ export default function PuppyNav() {
     };
   }, []);
 
-  // look toward the cursor and perk the ears when it is near (fine pointers only)
+  /* ---- look toward the cursor, perk ears when it is near ---------------- */
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -184,7 +314,7 @@ export default function PuppyNav() {
     };
   }, []);
 
-  // which section is on screen -> active state in the menu
+  /* ---- which section is on screen -> active state in the menu ---------- */
   useEffect(() => {
     const els = ITEMS.map((i) => document.getElementById(i.id)).filter((e): e is HTMLElement => !!e);
     if (!els.length) return;
@@ -200,7 +330,7 @@ export default function PuppyNav() {
     return () => io.disconnect();
   }, []);
 
-  // close on Escape, or on a press anywhere outside the dock (no backdrop element needed)
+  /* ---- close on Escape or on a press outside the dock (no backdrop) ----- */
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -220,9 +350,40 @@ export default function PuppyNav() {
     };
   }, [open]);
 
+  useEffect(() => {
+    roam.current.openMenu = open;
+  }, [open]);
+
+  /** make room for the menu: slide the puppy so the whole panel is on screen */
+  const makeRoom = useCallback(() => {
+    const dock = dockRef.current;
+    const R = roam.current;
+    if (!dock) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const panelW = Math.min(PANEL_W, vw - 24);
+    let x = R.x;
+    let y = R.y;
+    const right = x + R.size / 2 > vw / 2;
+    if (right) x = Math.max(x, panelW - R.size + EDGE);
+    else x = Math.min(x, vw - panelW - EDGE);
+    const spaceUp = y;
+    const spaceDown = vh - (y + R.size);
+    if (spaceUp < PANEL_H && spaceDown < PANEL_H) {
+      // neither side fits: go to the roomier one and let the panel scroll
+      y = spaceUp >= spaceDown ? Math.min(y, vh - 24) : y;
+    }
+    dock.dataset.snap = "true";
+    place(x, y);
+    window.setTimeout(() => {
+      if (dockRef.current) dockRef.current.dataset.snap = "false";
+    }, 450);
+  }, [place]);
+
   const toggle = () => {
     touched.current = true;
     const next = !open;
+    if (next) makeRoom();
     setOpen(next);
     setMood("happy", 1500);
     setBurst((b) => b + 1);
@@ -246,7 +407,7 @@ export default function PuppyNav() {
   };
 
   return (
-    <div ref={dockRef} className="pup-dock" data-open={open}>
+    <div ref={dockRef} className="pup-dock" data-open={open} data-h="left" data-v="up">
       {/* speech bubble: decorative, never catches pointers */}
       <p className="pup-bubble" data-show={showMsg ? "true" : "false"} role="status" aria-live="polite">
         {message}
@@ -258,10 +419,18 @@ export default function PuppyNav() {
         className="pup-badge"
         onClick={toggle}
         onPointerEnter={() => {
+          roam.current.hovering = true;
           if (svgRef.current && svgRef.current.dataset.mood !== "happy") svgRef.current.dataset.hover = "true";
         }}
         onPointerLeave={() => {
+          roam.current.hovering = false;
           if (svgRef.current) svgRef.current.dataset.hover = "false";
+        }}
+        onFocus={() => {
+          roam.current.focused = true;
+        }}
+        onBlur={() => {
+          roam.current.focused = false;
         }}
         aria-expanded={open}
         aria-controls="puppy-menu"
