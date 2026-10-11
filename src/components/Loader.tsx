@@ -1,90 +1,75 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { usePreloadImages } from "@/hooks/usePreloadImages";
-import { getSequencePath } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+
+const DURATION_MS = 1600;
 
 export default function Loader({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
   const [show, setShow] = useState(true);
-
-  const paths = useMemo(
-    () => Array.from({ length: 90 }, (_, i) => getSequencePath(i + 1)),
-    []
-  );
-
-  const { loaded } = usePreloadImages(paths, (p) => {
-    setProgress(Math.round(p * 100));
-  });
+  const reduced = !!useReducedMotion();
 
   useEffect(() => {
-    if (loaded) {
-      const timer = setTimeout(() => {
+    const total = reduced ? 200 : DURATION_MS;
+    const start = Date.now();
+    const id = window.setInterval(() => {
+      const p = Math.min((Date.now() - start) / total, 1);
+      setProgress(Math.round(p * 100));
+      if (p >= 1) {
+        window.clearInterval(id);
         setShow(false);
-        setTimeout(onComplete, 800);
-      }, 600);
-      return () => clearTimeout(timer);
-    }
-  }, [loaded, onComplete]);
+      }
+    }, 40);
+    return () => window.clearInterval(id);
+  }, [reduced]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={onComplete}>
       {show && (
         <motion.div
+          key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#120C09]"
         >
-          {/* Brand Name */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-12"
+            className="mb-12 text-center"
           >
             <h1
-              className="text-3xl md:text-5xl font-bold text-white uppercase tracking-[0.2em]"
-              style={{
-                fontFamily: "var(--font-display)",
-              }}
+              className="text-3xl md:text-5xl font-medium text-[#F3E8D4] tracking-[0.04em]"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              STARBUCKS CAFÉ
+              Kaapi Katha
             </h1>
-            <div className="flex items-center justify-center gap-3 mt-3">
+            <div className="flex items-center justify-center gap-3 mt-4">
               <span className="block w-8 h-[1px] bg-[#D4943A]" />
               <span
-                className="text-[#D4943A] text-[0.65rem] uppercase"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  letterSpacing: "0.3em",
-                }}
+                className="text-[#D4943A] text-sm"
+                style={{ fontFamily: "var(--font-deva)" }}
               >
-                Coffee
+                कॉफ़ी की कहानी
               </span>
               <span className="block w-8 h-[1px] bg-[#D4943A]" />
             </div>
           </motion.div>
 
-          {/* Progress Bar */}
           <div className="w-48 md:w-64">
             <div className="h-[1px] bg-white/10 relative overflow-hidden">
-              <motion.div
+              <div
                 className="absolute inset-y-0 left-0 bg-[#D4943A]"
-                initial={{ width: "0%" }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                style={{ width: `${progress}%` }}
               />
             </div>
             <p
               className="text-center text-white/40 text-[0.65rem] mt-4"
-              style={{
-                fontFamily: "var(--font-mono)",
-                letterSpacing: "0.2em",
-              }}
+              style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.2em" }}
             >
-              {progress}%
+              Brewing the decoction… {progress}%
             </p>
           </div>
         </motion.div>

@@ -69,7 +69,7 @@ export default function DrinkCustomizer() {
       name: `Custom Crafted ${size}`,
       subtitle: `${milk}${syrupStr}${toppingsStr}`,
       price: `$${totalPrice.toFixed(2)}`,
-      image: "/sequences/coffee/coffee-scroll_001.webp",
+      image: "/images/coffee/menu_custom_5.jpg",
       description: `A custom-tailored ${size} beverage crafted with ${milk}, ${shots} shots, and premium ingredients.`,
     };
 
