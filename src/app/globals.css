@@ -168,11 +168,7 @@ html.lenis, html.lenis body {
 }
 
 /* === SCROLL-DRIVEN CUP ===
-   The WebGL cup replaces these 2D stand-ins whenever the stage is running. */
-html[data-cup-stage="webgl"] .preview-fallback {
-  visibility: hidden;
-}
-
+   The WebGL cup replaces the About photo on large screens. */
 @media (min-width: 1024px) {
   html[data-cup-stage="webgl"] .about-photo {
     visibility: hidden;

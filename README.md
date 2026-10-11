@@ -16,10 +16,17 @@ Concept, design and development by **Pratik Prashant Kolhe**.
 - **A path measured from the layout.** Keyframes are anchored to real DOM
   sections (`CupScene.tsx`), so the cup zig-zags into the free lane opposite
   each block of text and never needs hard-coded pixel positions.
-- **Live preview.** In *Build Your Cup* the cup lands in the preview slot and
-  responds to size and milk choices.
-- **Build-your-cup and cart** with rupee pricing and a demo checkout (no payment
-  is taken).
+- **Build Your Cup, as a live preparation.** The preview panel has its own
+  scene: espresso pulls from a group head, milk pours from a tilting pitcher,
+  syrup drips in one pulse per pump, toppings land, and steam rises when the
+  drink is served. Streams are stretched between their source and the *current*
+  liquid surface, so they always connect. Every stage is a pure function of a
+  playhead, so it can be replayed and is driven by the shots, milk, syrup and
+  toppings you choose.
+- **One price calculation.** `src/lib/builderConfig.ts` owns the options, the
+  price breakdown and the cart id, so the controls, 3D scene and cart agree. The
+  same recipe merges into one cart line and carries its configuration.
+- **Demo checkout:** no payment is taken.
 - **Fallbacks.** A still SVG cup when WebGL is unavailable or the context is
   lost; `prefers-reduced-motion` removes idle motion and damping; phones and
   tablets use a simpler path (hero, then the customizer preview).
@@ -45,7 +52,10 @@ npm run build && npm start
 
 | Path | What it is |
 | --- | --- |
-| `src/components/CupScene.tsx` | The cup, lighting and the scroll-keyframe rig |
+| `src/components/CupScene.tsx` | Page-wide scroll-keyframe rig for the travelling cup |
+| `src/components/CupModel.tsx` | Shared ceramic cup, saucer, liquid surface, studio lighting |
+| `src/components/BuilderScene.tsx` | The preparation sequence in the Build Your Cup panel |
+| `src/lib/builderConfig.ts` | Options, pricing, cart id for the cup builder |
 | `src/components/CupStage.tsx` | Fixed canvas host, WebGL detection, error boundary |
 | `src/components/HeroCanvas.tsx` | Hero section: headline and static fallback |
 | `src/lib/cupStore.ts` | Non-reactive bridge between the cup builder and the scene |

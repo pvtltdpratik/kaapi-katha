@@ -125,6 +125,11 @@ export default function CartDrawer() {
                           <p className="text-[#D4943A] text-[0.65rem] uppercase tracking-widest mt-0.5" style={{ fontFamily: "var(--font-mono)" }}>
                             {item.item.price}
                           </p>
+                          {item.item.config && (
+                            <p className="text-white/40 text-[0.65rem] leading-snug mt-1 line-clamp-3">
+                              {item.item.subtitle}
+                            </p>
+                          )}
 
                           {/* Quantity Controls */}
                           <div className="flex items-center gap-3 mt-3">

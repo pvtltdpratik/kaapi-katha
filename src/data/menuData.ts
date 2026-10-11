@@ -1,3 +1,5 @@
+import type { BuilderConfig } from "@/lib/builderConfig";
+
 export interface MenuItem {
   id: number;
   name: string;
@@ -6,6 +8,8 @@ export interface MenuItem {
   price: string;
   image: string;
   video?: string;
+  /** present on cups built in the customizer, so the exact recipe travels with the cart line */
+  config?: BuilderConfig;
 }
 
 export const menuData: MenuItem[] = [
