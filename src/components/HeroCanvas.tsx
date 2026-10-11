@@ -66,9 +66,11 @@ export default function HeroCanvas() {
 
       {mode === "fallback" && <StaticCup />}
 
+      {/* the text block is centred inside the space left of the cup lane */}
+      <div className="relative z-10 w-full lg:w-[58%] lg:flex lg:justify-center">
       <motion.div
         style={{ y: textY, opacity: textOpacity }}
-        className="relative z-10 w-full px-6 md:px-12 lg:px-20 pt-28 pb-14 lg:pb-24 lg:max-w-[min(50%,40rem)]"
+        className="w-full px-6 md:px-12 lg:px-0 pt-28 pb-14 lg:pb-24 lg:max-w-[36rem]"
       >
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -125,6 +127,7 @@ export default function HeroCanvas() {
           </a>
         </motion.div>
       </motion.div>
+      </div>
 
       <div className="absolute bottom-8 left-6 md:left-12 lg:left-20 hidden md:flex items-center gap-3 pointer-events-none">
         <span className="block w-10 h-[1px] bg-[#D4943A]/60" />
