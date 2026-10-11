@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
 /*
- * Kaapi Katha
- * One dark ground, one warm accent. Type does the work: Fraunces for the voice,
- * Inter for everything you read or press. No glows, no glass, no grain.
+ * Kaapi Katha — colour roles
+ *
+ *   Yellow   a warm golden yellow: highlights, selected states, one big ground
+ *   Red      a deep brick-vermilion: the hero ground and the important actions
+ *   Café     espresso, roast, cream: text, depth, and the dark builder stage
+ *
+ * Sections choose a theme (theme-red / theme-yellow / theme-espresso) and every
+ * component reads role tokens (ground, surface, fg, accent), so contrast is
+ * decided once per theme instead of per element.
  */
+:root {
+  --yellow: #ecb531;
+  --red: #9e2b21;
+  --espresso: #24160f;
+  --roast: #4b2d1d;
+  --cream: #f8eeda;
+}
+
 @theme inline {
-  --color-ground: #14100d;
-  --color-surface: #1b1511;
-  --color-ink: #efe6d6;
-  --color-accent: #d19a4f;
+  --color-ground: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-cream: #f8eeda;
+  --color-espresso: #24160f;
+}
+
+.theme-red {
+  --bg: #9e2b21;
+  --surface: #8a241b;
+  --fg: #f8eeda;
+  --accent: #f2b93b;
+  --on-accent: #24160f;
+  --btn-bg: #f8eeda;
+  --btn-fg: #24160f;
+  --btn-hover-bg: #f2b93b;
+  --btn-hover-fg: #24160f;
+}
+
+.theme-yellow {
+  --bg: #ecb531;
+  --surface: #e0a624;
+  --fg: #24160f;
+  --accent: #8f2219;
+  --on-accent: #f8eeda;
+  --btn-bg: #9e2b21;
+  --btn-fg: #f8eeda;
+  --btn-hover-bg: #24160f;
+  --btn-hover-fg: #f8eeda;
+}
+
+.theme-espresso {
+  --bg: #24160f;
+  --surface: #2f1d14;
+  --fg: #f8eeda;
+  --accent: #f2b93b;
+  --on-accent: #24160f;
+  --btn-bg: #f2b93b;
+  --btn-fg: #24160f;
+  --btn-hover-bg: #f8eeda;
+  --btn-hover-fg: #24160f;
 }
 
 html {
   overflow-x: clip;
   scroll-behavior: auto;
-  background-color: #14100d;
+  background-color: #24160f;
 }
 
 body {
-  background-color: #14100d;
-  color: #efe6d6;
+  background-color: #24160f;
+  color: #f8eeda;
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -28,57 +81,61 @@ body {
 }
 
 ::selection {
-  background: #d19a4f;
-  color: #14100d;
+  background: #f2b93b;
+  color: #24160f;
 }
 
 :focus-visible {
-  outline: 2px solid #d19a4f;
+  outline: 2px solid var(--accent, #f2b93b);
   outline-offset: 3px;
 }
 
-/* Display type: used for every headline so the voice stays consistent */
+/*
+ * Brand type. The supplied font (Ngetic Modern) has no digits and no rupee
+ * sign, so the stack falls back to Inter per glyph: letters are the brand,
+ * numerals and ₹ stay clean and legible.
+ */
 .display {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-brand), var(--font-inter), Georgia, serif;
   font-weight: 400;
-  letter-spacing: -0.015em;
-  line-height: 1.05;
+  font-synthesis: none;
+  letter-spacing: 0;
+  line-height: 1.02;
 }
 
-/* Layered so Tailwind utilities can override them */
 @layer components {
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.8rem 1.4rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #14100d;
-    background: #efe6d6;
-    border: 1px solid #efe6d6;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--btn-fg, #24160f);
+    background: var(--btn-bg, #f8eeda);
+    border: 1px solid var(--btn-bg, #f8eeda);
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
   .btn:hover {
-    background: #d19a4f;
-    border-color: #d19a4f;
+    background: var(--btn-hover-bg);
+    color: var(--btn-hover-fg);
+    border-color: var(--btn-hover-bg);
   }
 
   .link {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #efe6d6;
-    border-bottom: 1px solid rgba(239, 230, 214, 0.35);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--fg);
+    border-bottom: 2px solid currentColor;
     padding-bottom: 2px;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: opacity 0.2s ease;
   }
   .link:hover {
-    color: #d19a4f;
-    border-color: #d19a4f;
+    opacity: 0.7;
   }
 }
 

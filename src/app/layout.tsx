@@ -1,12 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Noto_Serif_Devanagari } from "next/font/google";
+import localFont from "next/font/local";
+import { Inter, Noto_Serif_Devanagari } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display",
-  axes: ["opsz"],
+/*
+ * Brand typeface. To change it, drop a new file in src/fonts and edit `src`
+ * (and `weight` if it ships more than Regular). Everything that uses
+ * `.display` follows automatically.
+ */
+const brand = localFont({
+  src: "../fonts/NgeticModern-Regular.otf",
+  variable: "--font-brand",
+  weight: "400",
+  display: "swap",
 });
 
 const devanagari = Noto_Serif_Devanagari({
@@ -29,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#14100d",
+  themeColor: "#9e2b21",
 };
 
 export default function RootLayout({
@@ -40,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${fraunces.variable} ${devanagari.variable} bg-[#14100d] text-[#efe6d6] antialiased`}
+        className={`${inter.variable} ${brand.variable} ${devanagari.variable} bg-espresso text-cream antialiased`}
         suppressHydrationWarning
       >
         <CartProvider>{children}</CartProvider>
