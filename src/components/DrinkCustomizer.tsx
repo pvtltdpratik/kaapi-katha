@@ -43,8 +43,8 @@ const noopSubscribe = () => () => undefined;
 
 /* ---- small building blocks ------------------------------------------ */
 
-const legend = "text-sm font-medium text-[#efe6d6] mb-3";
-const hint = "text-xs text-[#efe6d6]/50 mt-2";
+const legend = "text-sm font-medium text-fg mb-3";
+const hint = "text-xs text-fg/50 mt-2";
 
 function Choice({
   active,
@@ -62,8 +62,8 @@ function Choice({
       aria-pressed={active}
       className={`border px-3 py-3 text-sm font-medium transition-colors duration-200 cursor-pointer ${
         active
-          ? "border-[#efe6d6] bg-[#efe6d6] text-[#14100d]"
-          : "border-white/15 text-[#efe6d6]/75 hover:border-white/40"
+          ? "border-fg bg-fg text-ground"
+          : "border-fg/15 text-fg/75 hover:border-fg/40"
       }`}
     >
       {children}
@@ -85,7 +85,7 @@ function Stepper({
   name: string;
 }) {
   const base =
-    "w-10 h-10 border border-white/15 flex items-center justify-center text-lg text-[#efe6d6] hover:border-white/40 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed";
+    "w-10 h-10 border border-fg/15 flex items-center justify-center text-lg text-fg hover:border-fg/40 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed";
   return (
     <div className="flex items-center gap-3">
       <button
@@ -97,7 +97,7 @@ function Stepper({
       >
         −
       </button>
-      <span className="text-[#efe6d6] min-w-[24px] text-center tabular-nums" aria-live="polite">
+      <span className="text-fg min-w-[24px] text-center tabular-nums" aria-live="polite">
         {value}
       </span>
       <button
@@ -123,7 +123,7 @@ function StaticPreview() {
         <ellipse cx="110" cy="50" rx="65" ry="12" fill="#e4dfd4" />
         <ellipse cx="110" cy="53" rx="56" ry="9" fill="#6b4425" />
       </svg>
-      <p className="text-[#efe6d6]/55 text-sm max-w-[16rem] leading-relaxed">
+      <p className="text-fg/55 text-sm max-w-[16rem] leading-relaxed">
         The 3D preview needs WebGL, which isn&apos;t available here. Your choices and the price still work.
       </p>
     </div>
@@ -140,6 +140,8 @@ export default function DrinkCustomizer() {
   const [config, setConfig] = useState<BuilderConfig>(DEFAULT_CONFIG);
   const [stage, setStage] = useState("Preparing");
   const [replayToken, setReplayToken] = useState(0);
+  const [resetToken, setResetToken] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
   const [compact, setCompact] = useState(false);
   const [active, setActive] = useState(true);
 
@@ -174,8 +176,10 @@ export default function DrinkCustomizer() {
   const hasToppings = config.cream || config.drizzle || config.cinnamon;
 
   const steps = useMemo(() => {
-    const s = ["Espresso", "Milk"];
+    // bottom of the glass to the top: syrup, espresso, milk, then toppings
+    const s: string[] = [];
     if (config.syrup !== "None") s.push("Syrup");
+    s.push("Espresso", "Milk");
     if (hasToppings) s.push("Toppings");
     s.push("Served");
     return s;
@@ -196,9 +200,9 @@ export default function DrinkCustomizer() {
   };
 
   return (
-    <section id="customizer" className="relative py-24 lg:py-32 border-t border-white/10">
+    <section id="customizer" className="theme-espresso bg-ground text-fg relative py-24 lg:py-32">
       <div className="max-w-6xl mx-auto px-6 md:px-12">
-        <h2 className="display text-4xl md:text-6xl text-[#efe6d6] mb-14">Build your cup</h2>
+        <h2 className="display text-4xl md:text-6xl text-fg mb-14">Build your cup</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Left: the drink being made */}
@@ -206,7 +210,7 @@ export default function DrinkCustomizer() {
             <div
               id="cup-slot"
               ref={panelRef}
-              className="relative h-[62vh] min-h-[420px] max-h-[600px] bg-[#1b1511] overflow-hidden"
+              className="relative h-[62vh] min-h-[420px] max-h-[600px] bg-surface overflow-hidden"
             >
               {webgl ? (
                 <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
@@ -214,6 +218,8 @@ export default function DrinkCustomizer() {
                     cfgRef={cfgRef}
                     cream={config.cream}
                     replayToken={replayToken}
+                    resetToken={resetToken}
+                    zoomed={zoomed}
                     reducedMotion={reduced}
                     mobile={compact}
                     active={active}
@@ -226,7 +232,7 @@ export default function DrinkCustomizer() {
               )}
 
               <div className="absolute top-4 left-4 right-4 flex items-start justify-between pointer-events-none">
-                <p className="text-sm text-[#efe6d6]/70" aria-live="polite">
+                <p className="text-sm text-fg/70" aria-live="polite">
                   {!webgl
                     ? ""
                     : stage === "Served"
@@ -236,25 +242,40 @@ export default function DrinkCustomizer() {
                         : stage}
                 </p>
                 {webgl && (
-                  <button
-                    type="button"
-                    onClick={() => setReplayToken((n) => n + 1)}
-                    className="pointer-events-auto text-sm text-[#efe6d6]/80 hover:text-[#d19a4f] underline underline-offset-4 decoration-white/30 cursor-pointer"
-                  >
-                    Replay
-                  </button>
+                  <div className="pointer-events-auto flex items-center gap-4 text-sm">
+                    {(
+                      [
+                        ["Replay", () => setReplayToken((n) => n + 1), false],
+                        [zoomed ? "Farther" : "Closer", () => setZoomed((z) => !z), zoomed],
+                        ["Reset view", () => { setResetToken((n) => n + 1); setZoomed(false); }, false],
+                      ] as const
+                    ).map(([text, fn]) => (
+                      <button
+                        key={text}
+                        type="button"
+                        onClick={fn}
+                        className="text-fg/80 hover:text-accent underline underline-offset-4 decoration-fg/30 cursor-pointer"
+                      >
+                        {text}
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
 
               {webgl && (
-                <ol className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-x-4 gap-y-1 pointer-events-none" aria-label="Preparation steps">
+                <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
+                <p className="text-sm text-fg mb-2" aria-live="polite">
+                  {describeConfig(config)}
+                </p>
+                <ol className="flex flex-wrap gap-x-4 gap-y-1" aria-label="Preparation steps">
                   {steps.map((s, i) => {
                     const state = i < stageIndex || stage === "Served" ? "done" : i === stageIndex ? "now" : "todo";
                     return (
                       <li
                         key={s}
                         className={`text-xs transition-colors ${
-                          state === "now" ? "text-[#d19a4f]" : state === "done" ? "text-[#efe6d6]/70" : "text-[#efe6d6]/30"
+                          state === "now" ? "text-accent" : state === "done" ? "text-fg/70" : "text-fg/30"
                         }`}
                       >
                         {s}
@@ -262,6 +283,7 @@ export default function DrinkCustomizer() {
                     );
                   })}
                 </ol>
+                </div>
               )}
             </div>
           </div>
@@ -293,8 +315,8 @@ export default function DrinkCustomizer() {
 
             <div>
               <div className="flex justify-between items-baseline mb-3">
-                <span className="text-sm font-medium text-[#efe6d6]">Espresso shots</span>
-                <span className="text-sm text-[#efe6d6]/70 tabular-nums">
+                <span className="text-sm font-medium text-fg">Espresso shots</span>
+                <span className="text-sm text-fg/70 tabular-nums">
                   {config.shots > 1 ? `+₹${(config.shots - 1) * EXTRA_SHOT_PRICE}` : "Included"}
                 </span>
               </div>
@@ -311,7 +333,7 @@ export default function DrinkCustomizer() {
                   id="syrup"
                   value={config.syrup}
                   onChange={(e) => patch({ syrup: e.target.value as BuilderConfig["syrup"] })}
-                  className="w-full bg-[#14100d] border border-white/15 text-[#efe6d6] text-sm p-3 focus:outline-none focus:border-[#d19a4f] rounded-none cursor-pointer"
+                  className="w-full bg-ground border border-fg/15 text-fg text-sm p-3 focus:outline-none focus:border-accent rounded-none cursor-pointer"
                 >
                   {SYRUPS.map((s) => (
                     <option key={s} value={s}>
@@ -324,8 +346,8 @@ export default function DrinkCustomizer() {
               {config.syrup !== "None" && (
                 <div>
                   <div className="flex justify-between items-baseline mb-3">
-                    <span className="text-sm font-medium text-[#efe6d6]">Pumps</span>
-                    <span className="text-sm text-[#efe6d6]/70 tabular-nums">+₹{config.pumps * PUMP_PRICE}</span>
+                    <span className="text-sm font-medium text-fg">Pumps</span>
+                    <span className="text-sm text-fg/70 tabular-nums">+₹{config.pumps * PUMP_PRICE}</span>
                   </div>
                   <Stepper name="pumps" value={config.pumps} min={PUMPS_MIN} max={PUMPS_MAX} onChange={(v) => patch({ pumps: v })} />
                 </div>
@@ -349,8 +371,8 @@ export default function DrinkCustomizer() {
                     onClick={() => patch({ [key]: !config[key] } as Partial<BuilderConfig>)}
                     className={`border px-3 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between gap-2 cursor-pointer ${
                       config[key]
-                        ? "border-[#efe6d6] bg-[#efe6d6] text-[#14100d]"
-                        : "border-white/15 text-[#efe6d6]/75 hover:border-white/40"
+                        ? "border-fg bg-fg text-ground"
+                        : "border-fg/15 text-fg/75 hover:border-fg/40"
                     }`}
                   >
                     <span className="text-left">{text}</span>
@@ -361,18 +383,18 @@ export default function DrinkCustomizer() {
             </fieldset>
 
             {/* total and add */}
-            <div className="border-t border-white/15 pt-6">
+            <div className="border-t border-fg/15 pt-6">
               <ul className="space-y-1.5 mb-5">
                 {lines.map((l) => (
                   <li key={l.label} className="flex justify-between text-sm">
-                    <span className="text-[#efe6d6]/65">{l.label}</span>
-                    <span className="text-[#efe6d6]/85 tabular-nums">₹{l.amount}</span>
+                    <span className="text-fg/65">{l.label}</span>
+                    <span className="text-fg/85 tabular-nums">₹{l.amount}</span>
                   </li>
                 ))}
               </ul>
               <div className="flex justify-between items-baseline mb-6">
-                <span className="text-sm font-medium text-[#efe6d6]">Total</span>
-                <span className="display text-3xl text-[#efe6d6] tabular-nums">₹{total}</span>
+                <span className="text-sm font-medium text-fg">Total</span>
+                <span className="display text-3xl text-fg tabular-nums">₹{total}</span>
               </div>
               <button type="button" onClick={handleAddToOrder} className="btn w-full justify-center py-4">
                 Add to order

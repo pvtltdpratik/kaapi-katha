@@ -16,13 +16,14 @@ Concept, design and development by **Pratik Prashant Kolhe**.
 - **A path measured from the layout.** Keyframes are anchored to real DOM
   sections (`CupScene.tsx`), so the cup zig-zags into the free lane opposite
   each block of text and never needs hard-coded pixel positions.
-- **Build Your Cup, as a live preparation.** The preview panel has its own
-  scene: espresso pulls from a group head, milk pours from a tilting pitcher,
-  syrup drips in one pulse per pump, toppings land, and steam rises when the
-  drink is served. Streams are stretched between their source and the *current*
-  liquid surface, so they always connect. Every stage is a pure function of a
-  playhead, so it can be replayed and is driven by the shots, milk, syrup and
-  toppings you choose.
+- **Build Your Cup, as a real glass.** The panel renders a transparent cup whose
+  height, width and inner liquid container come from the chosen size. Inside it
+  the drink is built from layers: syrup, espresso (thicker and darker with more
+  shots), a blended zone, milk (its colour follows Whole / Oat / Almond /
+  Coconut) and foam, with cream, jaggery drizzle and cinnamon on the surface.
+  Changing a control updates the glass immediately; Replay pours the *current*
+  drink. Drag to turn, tilt within limits, double-click or use Closer to
+  inspect, Reset view to return.
 - **One price calculation.** `src/lib/builderConfig.ts` owns the options, the
   price breakdown and the cart id, so the controls, 3D scene and cart agree. The
   same recipe merges into one cart line and carries its configuration.
@@ -34,8 +35,9 @@ Concept, design and development by **Pratik Prashant Kolhe**.
 ## Stack
 
 Next.js 16 · React 19 · Tailwind CSS v4 · three.js + @react-three/fiber ·
-Framer Motion · Lenis · TypeScript. Type is Fraunces, Inter, Space Mono and
-Noto Serif Devanagari via `next/font`.
+Framer Motion · Lenis · TypeScript. Brand type is Ngetic Modern
+(`src/fonts`, swap it in `layout.tsx`), with Inter for text and numerals
+(Ngetic has no digits) and Noto Serif Devanagari for the Hindi line.
 
 ## Getting started
 
@@ -54,7 +56,8 @@ npm run build && npm start
 | --- | --- |
 | `src/components/CupScene.tsx` | Page-wide scroll-keyframe rig for the travelling cup |
 | `src/components/CupModel.tsx` | Shared ceramic cup, saucer, liquid surface, studio lighting |
-| `src/components/BuilderScene.tsx` | The preparation sequence in the Build Your Cup panel |
+| `src/components/BuilderScene.tsx` | The glass, its layers, toppings and preparation in the builder |
+| `src/lib/glassCup.ts` | Size dimensions, layer stack and in-place revolved geometry |
 | `src/lib/builderConfig.ts` | Options, pricing, cart id for the cup builder |
 | `src/components/CupStage.tsx` | Fixed canvas host, WebGL detection, error boundary |
 | `src/components/HeroCanvas.tsx` | Hero section: headline and static fallback |
