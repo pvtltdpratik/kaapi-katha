@@ -131,6 +131,7 @@ export default function DrinkCustomizer() {
                     x="0"
                     width="200"
                     fill="#3d2314"
+                    initial={{ y: espressoY, height: espressoHeight }}
                     animate={{ y: espressoY, height: espressoHeight }}
                     transition={{ type: "spring", damping: 20, stiffness: 100 }}
                   />
@@ -140,6 +141,7 @@ export default function DrinkCustomizer() {
                     x="0"
                     width="200"
                     fill={milk === "Whole Milk" ? "#fdfbf7" : milk === "Oat Milk" ? "#eae3d2" : milk === "Almond Milk" ? "#ebdcb9" : "#f5ebd5"}
+                    initial={{ y: milkY, height: milkHeight }}
                     animate={{ y: milkY, height: milkHeight }}
                     transition={{ type: "spring", damping: 20, stiffness: 100 }}
                   />
@@ -151,6 +153,7 @@ export default function DrinkCustomizer() {
                     rx="50"
                     ry="6"
                     fill="rgba(255,255,255,0.2)"
+                    initial={{ cy: milkY }}
                     animate={{ cy: milkY }}
                     transition={{ type: "spring", damping: 20, stiffness: 100 }}
                   />
