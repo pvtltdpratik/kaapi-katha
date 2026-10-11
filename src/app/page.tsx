@@ -5,6 +5,7 @@ import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import HeroCanvas from "@/components/HeroCanvas";
+import CupStage from "@/components/CupStage";
 import CoffeeStory from "@/components/CoffeeStory";
 import MenuGrid from "@/components/MenuGrid";
 import DrinkCustomizer from "@/components/DrinkCustomizer";
@@ -31,6 +32,7 @@ export default function Home() {
       {isLoaded && (
         <main>
           <Header />
+          <CupStage />
           <HeroCanvas />
           <CoffeeStory />
           <MenuGrid />
