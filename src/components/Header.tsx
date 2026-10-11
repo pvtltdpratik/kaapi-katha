@@ -8,8 +8,8 @@ const navLinks = [
   { label: "Home", href: "#home" },
   { label: "Story", href: "#story" },
   { label: "Menu", href: "#menu" },
-  { label: "Craft", href: "#customizer" },
-  { label: "Gallery", href: "#gallery" },
+  { label: "Build a Cup", href: "#customizer" },
+  { label: "Moments", href: "#gallery" },
   { label: "About", href: "#about" },
 ];
 
@@ -42,16 +42,16 @@ export default function Header() {
         {/* Logo */}
         <a href="#home" className="flex items-center gap-2 group">
           <span
-            className="text-white text-lg font-bold tracking-[0.15em]"
+            className="text-[#F3E8D4] text-xl font-medium tracking-[0.02em]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            STARBUCKS CAFÉ
+            Kaapi Katha
           </span>
           <span
             className="text-[#D4943A] text-[0.55rem] uppercase tracking-[0.3em] hidden sm:inline"
             style={{ fontFamily: "var(--font-mono)" }}
           >
-            Coffee
+            Filter Coffee
           </span>
         </a>
 
@@ -75,14 +75,14 @@ export default function Header() {
             onClick={() => setCartOpen(true)}
             className="relative hidden md:inline-flex btn-cta text-[0.6rem] py-3 px-6 cursor-pointer"
           >
-            ORDER CART ({cartCount})
+            YOUR ORDER ({cartCount})
           </button>
 
           {/* Mobile Cart Icon */}
           <button
             onClick={() => setCartOpen(true)}
             className="lg:hidden w-10 h-10 flex items-center justify-center text-white hover:text-[#D4943A] relative cursor-pointer"
-            aria-label="Cart"
+            aria-label="Open your order"
           >
             <span className="text-lg">🛒</span>
             {cartCount > 0 && (
@@ -144,7 +144,7 @@ export default function Header() {
                 }}
                 className="btn-cta text-center text-[0.65rem] mt-4 cursor-pointer"
               >
-                OPEN CART ({cartCount})
+                YOUR ORDER ({cartCount})
               </button>
             </div>
           </motion.div>

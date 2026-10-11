@@ -9,7 +9,7 @@ import CoffeeStory from "@/components/CoffeeStory";
 import MenuGrid from "@/components/MenuGrid";
 import DrinkCustomizer from "@/components/DrinkCustomizer";
 import GallerySection from "@/components/GallerySection";
-import Testimonials from "@/components/Testimonials";
+import Rituals from "@/components/Rituals";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -36,7 +36,7 @@ export default function Home() {
           <MenuGrid />
           <DrinkCustomizer />
           <GallerySection />
-          <Testimonials />
+          <Rituals />
           <AboutSection />
           <Footer />
           <CartDrawer />

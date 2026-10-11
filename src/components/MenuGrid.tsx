@@ -25,14 +25,14 @@ export default function MenuGrid() {
             className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
-            The Menu
+            On the Counter
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
-            Crafted for the{" "}
-            <span className="italic text-[#D4943A]">Curious</span>
+            Poured for every{" "}
+            <span className="italic text-[#D4943A]">mood</span>
           </h2>
           <div className="section-divider mx-auto mt-8" />
         </motion.div>
@@ -49,7 +49,18 @@ export default function MenuGrid() {
             <motion.div
               key={item.id}
               variants={staggerItem}
-              className={`group relative overflow-hidden cursor-pointer ${
+              role="button"
+              tabIndex={0}
+              aria-label={`Add ${item.name} to your order`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  addToCart(item);
+                }
+              }}
+              onFocus={() => setHoveredId(item.id)}
+              onBlur={() => setHoveredId(null)}
+              className={`group relative overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] ${
                 index === 0
                   ? "lg:col-span-2 lg:row-span-2"
                   : ""
@@ -114,7 +125,7 @@ export default function MenuGrid() {
                       {item.price}
                     </span>
                     <span className="text-[#D4943A] text-xs uppercase tracking-widest font-bold transition-all duration-300 group-hover:translate-x-1" style={{ fontFamily: "var(--font-mono)" }}>
-                      + Add to Order
+                      + Add to order
                     </span>
                   </motion.div>
                 </div>

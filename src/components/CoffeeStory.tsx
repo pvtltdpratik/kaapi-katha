@@ -5,19 +5,22 @@ import { fadeUp, slideInLeft, slideInRight } from "@/lib/animations";
 
 const storyBlocks = [
   {
-    subtitle: "Origin",
-    title: "From Mountain Farms",
-    text: "Our beans are hand-picked at dawn from the misty highlands of Ethiopia, Colombia, and Sumatra — where altitude meets artistry. Each origin tells a different chapter of flavor.",
+    subtitle: "Roast",
+    title: "Slow, never hurried",
+    text: "Indian coffee grows in the shade of the Western Ghats, between pepper vines and silver oak. A slow roast keeps that mellow, spiced sweetness intact. Filter kaapi loves a dark roast with a little chicory for body.",
+    image: "/images/coffee/story_craft.jpg",
   },
   {
-    subtitle: "Craft",
-    title: "Roasted by Instinct",
-    text: "Our master roasters don't follow recipes — they follow senses. Small-batch roasting in copper drums, guided by the crack of the bean, the shimmer of oil, the shifting aroma.",
+    subtitle: "Ritual",
+    title: "Pulled, poured, passed",
+    text: "Decoction goes in, hot milk follows, and the pour travels between tumbler and davara until it froths. It cools the coffee, it is a small performance, and it is why a steel tumbler never feels like a mug.",
+    image: "/images/coffee/story_philosophy.jpg",
   },
   {
-    subtitle: "Philosophy",
-    title: "Sustainability First",
-    text: "We pay 3× fair-trade prices. We fund water infrastructure in farming communities. Every bag you open was grown with care for both the land and the people who tend it.",
+    subtitle: "Adda",
+    title: "A table for long talks",
+    text: "From old Irani cafés to coffee-house counters, the best seat was always the one that let a conversation run late. We design for that: warm light, no rush, and a refill when the talking is not done.",
+    image: "/images/coffee/story_origin.jpg",
   },
 ];
 
@@ -37,18 +40,19 @@ export default function CoffeeStory() {
             className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
-            Our Story
+            The Story
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
-            From Bean to{" "}
-            <span className="italic text-[#D4943A]">Belief</span>
+            From the Ghats to{" "}
+            <span className="italic text-[#D4943A]">your glass</span>
           </h2>
           <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-            From mountain farms to porcelain cups, every bean carries a story.
-            We don&apos;t just serve coffee — we curate moments.
+            Coffee reached India&apos;s hills centuries ago and settled into
+            daily life as a ceremony. This is a small, imagined chapter of that
+            story.
           </p>
           <div className="section-divider mx-auto mt-8" />
         </motion.div>
@@ -102,7 +106,7 @@ export default function CoffeeStory() {
                   <div
                     className="absolute inset-0 bg-[#1D130E]"
                     style={{
-                      backgroundImage: `url(/images/coffee/story_${block.subtitle.toLowerCase()}.jpg)`,
+                      backgroundImage: `url(${block.image})`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                     }}

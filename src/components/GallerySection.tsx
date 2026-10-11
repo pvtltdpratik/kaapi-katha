@@ -23,13 +23,13 @@ export default function GallerySection() {
             className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
-            Gallery
+            Moments
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
-            Moments in <span className="italic text-[#D4943A]">Motion</span>
+            Small things, <span className="italic text-[#D4943A]">slowly</span>
           </h2>
           <div className="section-divider mx-auto mt-4" />
         </motion.div>
