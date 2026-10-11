@@ -40,9 +40,9 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between h-20">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-2 group">
+        <a href="#home" className="flex items-center gap-2 group whitespace-nowrap">
           <span
-            className="text-[#F3E8D4] text-xl font-medium tracking-[0.02em]"
+            className="text-[#F3E8D4] text-lg sm:text-xl font-medium tracking-[0.02em]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Kaapi Katha

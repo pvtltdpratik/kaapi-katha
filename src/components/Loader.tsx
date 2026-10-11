@@ -13,19 +13,25 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     const total = reduced ? 200 : DURATION_MS;
     const start = Date.now();
+    let handoff: number | undefined;
     const id = window.setInterval(() => {
       const p = Math.min((Date.now() - start) / total, 1);
       setProgress(Math.round(p * 100));
       if (p >= 1) {
         window.clearInterval(id);
         setShow(false);
+        // timer, not onExitComplete: animation frames pause in background tabs
+        handoff = window.setTimeout(onComplete, 700);
       }
     }, 40);
-    return () => window.clearInterval(id);
-  }, [reduced]);
+    return () => {
+      window.clearInterval(id);
+      window.clearTimeout(handoff);
+    };
+  }, [reduced, onComplete]);
 
   return (
-    <AnimatePresence onExitComplete={onComplete}>
+    <AnimatePresence>
       {show && (
         <motion.div
           key="loader"

@@ -1,6 +1,13 @@
 "use client";
 
-import { Component, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  Component,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import dynamic from "next/dynamic";
 import {
   motion,
@@ -33,6 +40,20 @@ function detectWebGL() {
   } catch {
     return false;
   }
+}
+
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function useIsMobile() {
+  return useSyncExternalStore(
+    (notify) => {
+      const mq = window.matchMedia(MOBILE_QUERY);
+      mq.addEventListener("change", notify);
+      return () => mq.removeEventListener("change", notify);
+    },
+    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => false
+  );
 }
 
 class SceneBoundary extends Component<
@@ -90,8 +111,11 @@ export default function HeroCanvas() {
   const hotspotRefs = useRef<(HTMLElement | null)[]>([]);
   const reducedMotion = !!useReducedMotion();
 
-  const [mode, setMode] = useState<"checking" | "webgl" | "fallback">("checking");
-  const [mobile, setMobile] = useState(false);
+  // HeroCanvas only mounts after the loader finishes, i.e. on the client.
+  const [mode, setMode] = useState<"webgl" | "fallback">(() =>
+    detectWebGL() ? "webgl" : "fallback"
+  );
+  const mobile = useIsMobile();
   const [active, setActive] = useState(true);
 
   const { scrollYProgress } = useScroll({
@@ -101,15 +125,6 @@ export default function HeroCanvas() {
 
   const textY = useTransform(scrollYProgress, [0, 0.25], [0, -90]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.16], [1, 0]);
-
-  useEffect(() => {
-    setMode(detectWebGL() ? "webgl" : "fallback");
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   // stop rendering when the hero is scrolled well out of view
   useEffect(() => {
@@ -225,7 +240,7 @@ export default function HeroCanvas() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.8 }}
-              className="text-[#D4943A] text-base md:text-lg mb-6"
+              className="text-[#D4943A] text-base md:text-lg mb-6 sm:mb-6"
               style={{ fontFamily: "var(--font-deva)" }}
             >
               हर घूंट में थोड़ा और भारत
@@ -235,7 +250,7 @@ export default function HeroCanvas() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
-              className="text-white/60 text-sm md:text-base leading-relaxed mb-9 max-w-md"
+              className="hidden sm:block text-white/60 text-sm md:text-base leading-relaxed mb-9 max-w-md"
             >
               Decoction dripped slow, milk steamed soft, and a steel tumbler
               that still feels right in your hands. Old rituals, poured for

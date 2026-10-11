@@ -72,8 +72,10 @@ function sampleCamera(q: number, pos: THREE.Vector3, look: THREE.Vector3) {
 /* ------------------------------------------------------------------ */
 
 function Environment() {
-  const { gl, scene } = useThree();
+  const gl = useThree((st) => st.gl);
+  const get = useThree((st) => st.get);
   useEffect(() => {
+    const scene = get().scene;
     const pmrem = new THREE.PMREMGenerator(gl);
     const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = env;
@@ -83,7 +85,7 @@ function Environment() {
       env.dispose();
       pmrem.dispose();
     };
-  }, [gl, scene]);
+  }, [gl, get]);
   return null;
 }
 
@@ -416,17 +418,14 @@ function Rig({
   const key = useRef<THREE.DirectionalLight>(null!);
   const anchors = useRef<(THREE.Object3D | null)[]>([]);
   const state = useRef({ x: 0, y: 0, q: 0 });
-  const v = useMemo(
-    () => ({
-      pos: new THREE.Vector3(),
-      look: new THREE.Vector3(),
-      cur: new THREE.Vector3(),
-      tmp: new THREE.Vector3(),
-    }),
-    []
-  );
+  const vecs = useRef({
+    pos: new THREE.Vector3(),
+    look: new THREE.Vector3(),
+    tmp: new THREE.Vector3(),
+  });
 
   useFrame((fs, dt) => {
+    const v = vecs.current;
     const s = state.current;
     const t = reducedMotion ? 0 : fs.clock.elapsedTime;
     const raw = progress.get();
@@ -443,7 +442,11 @@ function Rig({
     // composition: object sits right of the headline, then drifts to centre
     const g = group.current;
     g.position.x = wide ? THREE.MathUtils.lerp(1.55, 0, smooth01(0, 0.9, s.q)) : 0;
-    g.position.y = Math.sin(t * 0.9) * 0.05 - 0.15;
+    // on phones the headline sits below the product, so lift it into the upper half
+    const baseY = wide
+      ? -0.15
+      : THREE.MathUtils.lerp(1.75, -0.15, smooth01(0, 0.6, s.q));
+    g.position.y = Math.sin(t * 0.9) * 0.05 + baseY;
     g.rotation.x = s.y * 0.07 + Math.sin(t * 0.5) * 0.01;
     g.rotation.z = -s.x * 0.08;
     g.rotation.y = s.x * 0.25;
@@ -451,7 +454,7 @@ function Rig({
     // camera
     sampleCamera(s.q, v.pos, v.look);
     if (!wide) {
-      v.pos.z *= 1.3 + (1 / Math.max(aspect, 0.4)) * 0.12;
+      v.pos.z *= 1.45;
       v.pos.y += 0.3;
     }
     v.pos.x += s.x * 0.25;
@@ -571,7 +574,7 @@ export default function HeroScene({
 
   return (
     <Canvas
-      shadows
+      shadows={{ type: THREE.PCFShadowMap }}
       dpr={[1, mobile ? 1.5 : 1.75]}
       frameloop={active ? "always" : "never"}
       camera={{ fov: 30, position: [0, 0.9, 8.4], near: 0.1, far: 40 }}
