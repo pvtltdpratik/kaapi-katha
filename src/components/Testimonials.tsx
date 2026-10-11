@@ -20,7 +20,7 @@ export default function Testimonials() {
   const testimonial = testimonialData[current];
 
   return (
-    <section className="relative py-32 md:py-44 bg-[#0E0E0E]">
+    <section className="relative py-32 md:py-44 bg-[#120C09]">
       <div className="max-w-5xl mx-auto px-6 md:px-10">
         {/* Section Header */}
         <motion.div
@@ -31,17 +31,17 @@ export default function Testimonials() {
           className="text-center mb-20"
         >
           <p
-            className="text-[#C49A6C] text-[0.65rem] uppercase mb-4"
+            className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
             Testimonials
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
-            style={{ fontFamily: "var(--font-playfair)", letterSpacing: "0.02em" }}
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
             Words That{" "}
-            <span className="italic text-[#C49A6C]">Linger</span>
+            <span className="italic text-[#D4943A]">Linger</span>
           </h2>
           <div className="section-divider mx-auto mt-4" />
         </motion.div>
@@ -60,7 +60,7 @@ export default function Testimonials() {
               {/* Stars */}
               <div className="flex items-center justify-center gap-1 mb-8">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <span key={i} className="text-[#C49A6C] text-sm">
+                  <span key={i} className="text-[#D4943A] text-sm">
                     ★
                   </span>
                 ))}
@@ -69,7 +69,7 @@ export default function Testimonials() {
               {/* Quote */}
               <blockquote
                 className="text-white/80 text-lg md:text-2xl leading-relaxed mb-10 italic"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
@@ -83,7 +83,7 @@ export default function Testimonials() {
                   {testimonial.name}
                 </p>
                 <p
-                  className="text-[#C49A6C] text-[0.65rem] uppercase"
+                  className="text-[#D4943A] text-[0.65rem] uppercase"
                   style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.2em" }}
                 >
                   {testimonial.role}
@@ -101,7 +101,7 @@ export default function Testimonials() {
               onClick={() => setCurrent(i)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 i === current
-                  ? "bg-[#C49A6C] w-6"
+                  ? "bg-[#D4943A] w-6"
                   : "bg-white/20 hover:bg-white/40"
               }`}
               aria-label={`Testimonial ${i + 1}`}

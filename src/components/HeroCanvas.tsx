@@ -39,8 +39,8 @@ export default function HeroCanvas() {
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-[#0E0E0E]/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0E0E0E]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#120C09] via-[#120C09]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#120C09]/60 to-transparent" />
 
         {/* Hero Text Overlay */}
         <div className="absolute inset-0 flex items-center justify-center text-center">
@@ -54,7 +54,7 @@ export default function HeroCanvas() {
               transition={{ duration: 1.5, delay: 1 }}
             >
               <p
-                className="text-[#C49A6C] text-[0.65rem] md:text-xs uppercase mb-6"
+                className="text-[#D4943A] text-[0.65rem] md:text-xs uppercase mb-6"
                 style={{
                   fontFamily: "var(--font-mono)",
                   letterSpacing: "0.35em",
@@ -70,13 +70,13 @@ export default function HeroCanvas() {
               transition={{ duration: 1, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl md:text-6xl lg:text-7xl text-white font-semibold leading-[1.1] mb-8"
               style={{
-                fontFamily: "var(--font-playfair)",
+                fontFamily: "var(--font-display)",
                 letterSpacing: "0.02em",
               }}
             >
               Brewed with
               <br />
-              <span className="italic text-[#C49A6C]">Precision.</span>
+              <span className="italic text-[#D4943A]">Precision.</span>
               <br />
               Served with{" "}
               <span className="italic">Soul.</span>
@@ -128,7 +128,7 @@ export default function HeroCanvas() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="w-[1px] h-8 bg-gradient-to-b from-[#C49A6C] to-transparent"
+            className="w-[1px] h-8 bg-gradient-to-b from-[#D4943A] to-transparent"
           />
         </motion.div>
       </div>

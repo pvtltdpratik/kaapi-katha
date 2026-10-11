@@ -1,17 +1,18 @@
-import type { Metadata } from "next";
-import { Playfair_Display, Cormorant_Garamond, Inter, Space_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Inter, Space_Mono, Noto_Serif_Devanagari } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-display",
+  axes: ["opsz"],
 });
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-cormorant",
+const devanagari = Noto_Serif_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "600"],
+  variable: "--font-deva",
 });
 
 const inter = Inter({
@@ -26,20 +27,24 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Starbucks Café — Brewed with Precision, Served with Soul",
+  title: "Kaapi Katha — A Little More India in Every Pour",
   description:
-    "Experience artisan coffee like never before. Starbucks Café — where gravity ends and flavor begins. Premium hand-picked beans, master-roasted, crafted into moments.",
+    "An interactive 3D coffee experience: filter kaapi, steel tumblers and café rituals, reimagined for today. A creative project by Pratik Prashant Kolhe.",
   keywords: [
-    "coffee",
-    "artisan",
-    "luxury",
-    "espresso",
-    "soho",
-    "nyc",
-    "starbucks",
-    "cafe",
+    "filter coffee",
+    "kaapi",
+    "Indian café",
     "specialty coffee",
+    "3D website",
+    "Three.js",
+    "Next.js",
   ],
+  authors: [{ name: "Pratik Prashant Kolhe" }],
+  creator: "Pratik Prashant Kolhe",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#120C09",
 };
 
 export default function RootLayout({
@@ -49,10 +54,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${spaceMono.variable} bg-[#0E0E0E] text-white antialiased`} suppressHydrationWarning>
+      <body
+        className={`${inter.variable} ${fraunces.variable} ${devanagari.variable} ${spaceMono.variable} bg-[#120C09] text-white antialiased`}
+        suppressHydrationWarning
+      >
         <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );
 }
-

@@ -12,12 +12,12 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="relative bg-[#0E0E0E] border-t border-white/5 overflow-hidden">
+    <footer className="relative bg-[#120C09] border-t border-white/5 overflow-hidden">
       {/* Giant Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
         <span
           className="text-[12vw] md:text-[10vw] font-bold text-white/[0.03] uppercase whitespace-nowrap select-none"
-          style={{ fontFamily: "var(--font-playfair)", letterSpacing: "0.1em" }}
+          style={{ fontFamily: "var(--font-display)", letterSpacing: "0.1em" }}
         >
           STARBUCKS CAFÉ
         </span>
@@ -36,7 +36,7 @@ export default function Footer() {
             <div className="col-span-2 md:col-span-1">
               <h3
                 className="text-white text-lg font-bold tracking-[0.15em] mb-4"
-                style={{ fontFamily: "var(--font-playfair)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 STARBUCKS CAFÉ
               </h3>
@@ -50,7 +50,7 @@ export default function Footer() {
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category}>
                 <h4
-                  className="text-[#C49A6C] text-[0.6rem] uppercase mb-6"
+                  className="text-[#D4943A] text-[0.6rem] uppercase mb-6"
                   style={{
                     fontFamily: "var(--font-mono)",
                     letterSpacing: "0.25em",

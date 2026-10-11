@@ -23,7 +23,7 @@ const storyBlocks = [
 
 export default function CoffeeStory() {
   return (
-    <section id="story" className="relative min-h-screen py-32 md:py-44 bg-[#0E0E0E] flex flex-col justify-center">
+    <section id="story" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center">
       <div className="max-w-7xl mx-auto px-6 md:px-10">
         {/* Section Header */}
         <motion.div
@@ -34,17 +34,17 @@ export default function CoffeeStory() {
           className="text-center mb-24"
         >
           <p
-            className="text-[#C49A6C] text-[0.65rem] uppercase mb-4"
+            className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
             Our Story
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
-            style={{ fontFamily: "var(--font-playfair)", letterSpacing: "0.02em" }}
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
             From Bean to{" "}
-            <span className="italic text-[#C49A6C]">Belief</span>
+            <span className="italic text-[#D4943A]">Belief</span>
           </h2>
           <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
             From mountain farms to porcelain cups, every bean carries a story.
@@ -71,7 +71,7 @@ export default function CoffeeStory() {
                 className="flex-1 max-w-lg"
               >
                 <span
-                  className="text-[#C49A6C] text-[0.6rem] uppercase block mb-4"
+                  className="text-[#D4943A] text-[0.6rem] uppercase block mb-4"
                   style={{
                     fontFamily: "var(--font-mono)",
                     letterSpacing: "0.3em",
@@ -81,7 +81,7 @@ export default function CoffeeStory() {
                 </span>
                 <h3
                   className="text-2xl md:text-4xl text-white font-semibold mb-6 leading-tight"
-                  style={{ fontFamily: "var(--font-playfair)" }}
+                  style={{ fontFamily: "var(--font-display)" }}
                 >
                   {block.title}
                 </h3>
@@ -100,14 +100,14 @@ export default function CoffeeStory() {
               >
                 <div className="relative aspect-[4/5] overflow-hidden group">
                   <div
-                    className="absolute inset-0 bg-[#1A1A1A]"
+                    className="absolute inset-0 bg-[#1D130E]"
                     style={{
                       backgroundImage: `url(/images/coffee/story_${block.subtitle.toLowerCase()}.jpg)`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                     }}
                   />
-                  <div className="absolute inset-0 bg-[#0E0E0E]/20 group-hover:bg-[#0E0E0E]/10 transition-all duration-700" />
+                  <div className="absolute inset-0 bg-[#120C09]/20 group-hover:bg-[#120C09]/10 transition-all duration-700" />
                   {/* Frame Border */}
                   <div className="absolute inset-4 border border-white/10" />
                 </div>

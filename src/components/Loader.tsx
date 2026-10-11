@@ -35,7 +35,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0E0E0E]"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#120C09]"
         >
           {/* Brand Name */}
           <motion.div
@@ -47,15 +47,15 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
             <h1
               className="text-3xl md:text-5xl font-bold text-white uppercase tracking-[0.2em]"
               style={{
-                fontFamily: "var(--font-playfair)",
+                fontFamily: "var(--font-display)",
               }}
             >
               STARBUCKS CAFÉ
             </h1>
             <div className="flex items-center justify-center gap-3 mt-3">
-              <span className="block w-8 h-[1px] bg-[#C49A6C]" />
+              <span className="block w-8 h-[1px] bg-[#D4943A]" />
               <span
-                className="text-[#C49A6C] text-[0.65rem] uppercase"
+                className="text-[#D4943A] text-[0.65rem] uppercase"
                 style={{
                   fontFamily: "var(--font-mono)",
                   letterSpacing: "0.3em",
@@ -63,7 +63,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
               >
                 Coffee
               </span>
-              <span className="block w-8 h-[1px] bg-[#C49A6C]" />
+              <span className="block w-8 h-[1px] bg-[#D4943A]" />
             </div>
           </motion.div>
 
@@ -71,7 +71,7 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
           <div className="w-48 md:w-64">
             <div className="h-[1px] bg-white/10 relative overflow-hidden">
               <motion.div
-                className="absolute inset-y-0 left-0 bg-[#C49A6C]"
+                className="absolute inset-y-0 left-0 bg-[#D4943A]"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: "easeOut" }}

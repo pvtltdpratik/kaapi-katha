@@ -78,25 +78,25 @@ export default function DrinkCustomizer() {
   };
 
   return (
-    <section id="customizer" className="relative py-24 md:py-32 bg-[#0E0E0E] overflow-hidden border-t border-white/5">
+    <section id="customizer" className="relative py-24 md:py-32 bg-[#120C09] overflow-hidden border-t border-white/5">
       {/* Background Decor */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#C49A6C]/5 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#D4943A]/5 rounded-full filter blur-[120px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
           <span
-            className="text-[#C49A6C] text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.3em] block mb-3 font-mono font-bold"
+            className="text-[#D4943A] text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.3em] block mb-3 font-mono font-bold"
           >
             Artisan Customizer
           </span>
           <h2
             className="text-3xl md:text-5xl text-white font-semibold uppercase tracking-wider"
-            style={{ fontFamily: "var(--font-playfair)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Craft Your Cup
           </h2>
-          <div className="w-12 h-[1px] bg-[#C49A6C] mx-auto mt-4" />
+          <div className="w-12 h-[1px] bg-[#D4943A] mx-auto mt-4" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -206,9 +206,9 @@ export default function DrinkCustomizer() {
                 </AnimatePresence>
 
                 {/* Circular Starbucks-style badge */}
-                <circle cx="100" cy="140" r="26" fill="#141414" stroke="rgba(255,255,255,0.15)" strokeWidth="2" />
-                <path d="M 85,140 C 85,120 115,120 115,140 C 115,150 85,150 85,140 Z" fill="none" stroke="#C49A6C" strokeWidth="1.5" />
-                <text x="100" y="143" fill="#C49A6C" fontSize="6" fontWeight="bold" textAnchor="middle" letterSpacing="1">S.B.</text>
+                <circle cx="100" cy="140" r="26" fill="#180F0B" stroke="rgba(255,255,255,0.15)" strokeWidth="2" />
+                <path d="M 85,140 C 85,120 115,120 115,140 C 115,150 85,150 85,140 Z" fill="none" stroke="#D4943A" strokeWidth="1.5" />
+                <text x="100" y="143" fill="#D4943A" fontSize="6" fontWeight="bold" textAnchor="middle" letterSpacing="1">S.B.</text>
 
                 {/* Cup Rim */}
                 <ellipse cx="100" cy="20" rx="55" ry="8" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
@@ -233,7 +233,7 @@ export default function DrinkCustomizer() {
                     onClick={() => setSize(s)}
                     className={`border p-3 text-xs tracking-wider font-bold transition-all duration-300 cursor-pointer ${
                       size === s
-                        ? "border-[#C49A6C] text-[#C49A6C] bg-[#C49A6C]/5"
+                        ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
                         : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                     }`}
                   >
@@ -253,7 +253,7 @@ export default function DrinkCustomizer() {
                     onClick={() => setMilk(m)}
                     className={`border p-3 text-[10px] tracking-wider font-bold transition-all duration-300 cursor-pointer ${
                       milk === m
-                        ? "border-[#C49A6C] text-[#C49A6C] bg-[#C49A6C]/5"
+                        ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
                         : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                     }`}
                   >
@@ -267,24 +267,24 @@ export default function DrinkCustomizer() {
             <div>
               <div className="flex justify-between items-center mb-3">
                 <label className="text-white/40 text-[0.65rem] tracking-wider uppercase font-mono">3. Espresso Shots</label>
-                <span className="text-[#C49A6C] text-xs font-mono font-bold">{shots} {shots === 1 ? "Shot" : "Shots"}</span>
+                <span className="text-[#D4943A] text-xs font-mono font-bold">{shots} {shots === 1 ? "Shot" : "Shots"}</span>
               </div>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setShots(Math.max(1, shots - 1))}
-                  className="w-10 h-10 border border-white/10 flex items-center justify-center hover:border-white/30 text-white hover:text-[#C49A6C] transition-colors cursor-pointer"
+                  className="w-10 h-10 border border-white/10 flex items-center justify-center hover:border-white/30 text-white hover:text-[#D4943A] transition-colors cursor-pointer"
                 >
                   -
                 </button>
                 <div className="flex-1 h-[2px] bg-white/10 relative">
                   <motion.div
-                    className="absolute top-0 left-0 h-full bg-[#C49A6C]"
+                    className="absolute top-0 left-0 h-full bg-[#D4943A]"
                     animate={{ width: `${(shots / 4) * 100}%` }}
                   />
                 </div>
                 <button
                   onClick={() => setShots(Math.min(4, shots + 1))}
-                  className="w-10 h-10 border border-white/10 flex items-center justify-center hover:border-white/30 text-white hover:text-[#C49A6C] transition-colors cursor-pointer"
+                  className="w-10 h-10 border border-white/10 flex items-center justify-center hover:border-white/30 text-white hover:text-[#D4943A] transition-colors cursor-pointer"
                 >
                   +
                 </button>
@@ -298,7 +298,7 @@ export default function DrinkCustomizer() {
                 <select
                   value={syrup}
                   onChange={(e) => setSyrup(e.target.value as SyrupType)}
-                  className="w-full bg-[#141414] border border-white/10 text-white text-xs tracking-wider p-3 focus:outline-none focus:border-[#C49A6C] rounded-none cursor-pointer"
+                  className="w-full bg-[#180F0B] border border-white/10 text-white text-xs tracking-wider p-3 focus:outline-none focus:border-[#D4943A] rounded-none cursor-pointer"
                 >
                   <option value="None">NONE</option>
                   <option value="Vanilla">VANILLA</option>
@@ -311,7 +311,7 @@ export default function DrinkCustomizer() {
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <label className="text-white/40 text-[0.65rem] tracking-wider uppercase font-mono">Syrup Pumps</label>
-                    <span className="text-[#C49A6C] text-xs font-mono font-bold">{syrupPumps} {syrupPumps === 1 ? "Pump" : "Pumps"}</span>
+                    <span className="text-[#D4943A] text-xs font-mono font-bold">{syrupPumps} {syrupPumps === 1 ? "Pump" : "Pumps"}</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <button
@@ -340,7 +340,7 @@ export default function DrinkCustomizer() {
                   onClick={() => setWhippedCream(!whippedCream)}
                   className={`border p-4 text-xs tracking-wider transition-all duration-300 flex items-center justify-between cursor-pointer ${
                     whippedCream
-                      ? "border-[#C49A6C] text-[#C49A6C] bg-[#C49A6C]/5"
+                      ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
                       : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                   }`}
                 >
@@ -351,7 +351,7 @@ export default function DrinkCustomizer() {
                   onClick={() => setCaramelDrizzle(!caramelDrizzle)}
                   className={`border p-4 text-xs tracking-wider transition-all duration-300 flex items-center justify-between cursor-pointer ${
                     caramelDrizzle
-                      ? "border-[#C49A6C] text-[#C49A6C] bg-[#C49A6C]/5"
+                      ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
                       : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                   }`}
                 >
@@ -362,7 +362,7 @@ export default function DrinkCustomizer() {
                   onClick={() => setCinnamon(!cinnamon)}
                   className={`border p-4 text-xs tracking-wider transition-all duration-300 flex items-center justify-between cursor-pointer ${
                     cinnamon
-                      ? "border-[#C49A6C] text-[#C49A6C] bg-[#C49A6C]/5"
+                      ? "border-[#D4943A] text-[#D4943A] bg-[#D4943A]/5"
                       : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                   }`}
                 >

@@ -5,9 +5,9 @@ import { fadeUp, slideInLeft, slideInRight } from "@/lib/animations";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="relative min-h-screen py-32 md:py-44 bg-[#0E0E0E] overflow-hidden flex flex-col justify-center">
+    <section id="about" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] overflow-hidden flex flex-col justify-center">
       {/* Background Decorative Element */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-[#C49A6C]/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-[#D4943A]/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -21,7 +21,7 @@ export default function AboutSection() {
           >
             <div className="aspect-[4/5] relative overflow-hidden glass p-4">
               <div
-                className="w-full h-full bg-[#1A1A1A]"
+                className="w-full h-full bg-[#1D130E]"
                 style={{
                   backgroundImage: `url(/images/coffee/about_brand.jpg)`,
                   backgroundSize: "cover",
@@ -29,7 +29,7 @@ export default function AboutSection() {
                 }}
               />
               {/* Floating Badge */}
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[#C49A6C] rounded-full flex items-center justify-center p-4 text-center">
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[#D4943A] rounded-full flex items-center justify-center p-4 text-center">
                 <span 
                   className="text-black text-[0.6rem] font-bold uppercase tracking-widest leading-tight"
                   style={{ fontFamily: "var(--font-mono)" }}
@@ -48,17 +48,17 @@ export default function AboutSection() {
             variants={slideInRight}
           >
             <p
-              className="text-[#C49A6C] text-[0.65rem] uppercase mb-4"
+              className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
               style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
             >
               The Brand
             </p>
             <h2
               className="text-4xl md:text-6xl text-white font-semibold mb-8 leading-tight"
-              style={{ fontFamily: "var(--font-playfair)" }}
+              style={{ fontFamily: "var(--font-display)" }}
             >
               Beyond the <br />
-              <span className="italic text-[#C49A6C]">Surface</span>
+              <span className="italic text-[#D4943A]">Surface</span>
             </h2>
             
             <div className="space-y-6 text-white/50 text-sm md:text-base leading-relaxed">

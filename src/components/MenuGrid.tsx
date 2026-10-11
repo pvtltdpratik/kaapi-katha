@@ -11,7 +11,7 @@ export default function MenuGrid() {
   const { addToCart } = useCart();
 
   return (
-    <section id="menu" className="relative min-h-screen py-32 md:py-44 bg-[#0E0E0E] flex flex-col justify-center overflow-hidden">
+    <section id="menu" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center overflow-hidden">
       <div className="w-full">
         {/* Section Header */}
         <motion.div
@@ -22,17 +22,17 @@ export default function MenuGrid() {
           className="text-center mb-24 max-w-4xl mx-auto px-6"
         >
           <p
-            className="text-[#C49A6C] text-[0.65rem] uppercase mb-4"
+            className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
             The Menu
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
-            style={{ fontFamily: "var(--font-playfair)", letterSpacing: "0.02em" }}
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
             Crafted for the{" "}
-            <span className="italic text-[#C49A6C]">Curious</span>
+            <span className="italic text-[#D4943A]">Curious</span>
           </h2>
           <div className="section-divider mx-auto mt-8" />
         </motion.div>
@@ -74,12 +74,12 @@ export default function MenuGrid() {
                 />
 
                 {/* Dark Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-[#0E0E0E]/60 to-[#0E0E0E]/20 transition-all duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#120C09] via-[#120C09]/60 to-[#120C09]/20 transition-all duration-500" />
 
                 {/* Content */}
                 <div className="relative z-10 h-full flex flex-col justify-end p-6 md:p-8">
                   <span
-                    className="text-[#C49A6C] text-[0.55rem] uppercase block mb-2"
+                    className="text-[#D4943A] text-[0.55rem] uppercase block mb-2"
                     style={{
                       fontFamily: "var(--font-mono)",
                       letterSpacing: "0.3em",
@@ -89,7 +89,7 @@ export default function MenuGrid() {
                   </span>
                   <h3
                     className="text-xl md:text-2xl text-white font-semibold mb-2"
-                    style={{ fontFamily: "var(--font-playfair)" }}
+                    style={{ fontFamily: "var(--font-display)" }}
                   >
                     {item.name}
                   </h3>
@@ -113,7 +113,7 @@ export default function MenuGrid() {
                     >
                       {item.price}
                     </span>
-                    <span className="text-[#C49A6C] text-xs uppercase tracking-widest font-bold transition-all duration-300 group-hover:translate-x-1" style={{ fontFamily: "var(--font-mono)" }}>
+                    <span className="text-[#D4943A] text-xs uppercase tracking-widest font-bold transition-all duration-300 group-hover:translate-x-1" style={{ fontFamily: "var(--font-mono)" }}>
                       + Add to Order
                     </span>
                   </motion.div>

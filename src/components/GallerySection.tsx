@@ -9,7 +9,7 @@ export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   return (
-    <section id="gallery" className="relative min-h-screen py-32 md:py-44 bg-[#0E0E0E] flex flex-col justify-center">
+    <section id="gallery" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center">
       <div className="w-full">
         {/* Section Header */}
         <motion.div
@@ -20,16 +20,16 @@ export default function GallerySection() {
           className="text-center mb-20"
         >
           <p
-            className="text-[#C49A6C] text-[0.65rem] uppercase mb-4"
+            className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
             style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
           >
             Gallery
           </p>
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
-            style={{ fontFamily: "var(--font-playfair)", letterSpacing: "0.02em" }}
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
           >
-            Moments in <span className="italic text-[#C49A6C]">Motion</span>
+            Moments in <span className="italic text-[#D4943A]">Motion</span>
           </h2>
           <div className="section-divider mx-auto mt-4" />
         </motion.div>
@@ -59,7 +59,7 @@ export default function GallerySection() {
                     backgroundPosition: "center",
                   }}
                 />
-                <div className="absolute inset-0 bg-[#0E0E0E]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                <div className="absolute inset-0 bg-[#120C09]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                   <span
                     className="text-white text-[0.6rem] uppercase tracking-[0.25em]"
                     style={{ fontFamily: "var(--font-mono)" }}
@@ -81,7 +81,7 @@ export default function GallerySection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[90] bg-[#0E0E0E]/95 backdrop-blur-xl flex items-center justify-center p-6"
+            className="fixed inset-0 z-[90] bg-[#120C09]/95 backdrop-blur-xl flex items-center justify-center p-6"
             onClick={() => setSelectedImage(null)}
           >
             <motion.div

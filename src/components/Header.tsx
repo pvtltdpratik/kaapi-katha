@@ -34,7 +34,7 @@ export default function Header() {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[#0E0E0E]/80 backdrop-blur-xl border-b border-white/5"
+          ? "bg-[#120C09]/80 backdrop-blur-xl border-b border-white/5"
           : "bg-transparent"
       }`}
     >
@@ -43,12 +43,12 @@ export default function Header() {
         <a href="#home" className="flex items-center gap-2 group">
           <span
             className="text-white text-lg font-bold tracking-[0.15em]"
-            style={{ fontFamily: "var(--font-playfair)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             STARBUCKS CAFÉ
           </span>
           <span
-            className="text-[#C49A6C] text-[0.55rem] uppercase tracking-[0.3em] hidden sm:inline"
+            className="text-[#D4943A] text-[0.55rem] uppercase tracking-[0.3em] hidden sm:inline"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Coffee
@@ -61,7 +61,7 @@ export default function Header() {
             <a
               key={link.label}
               href={link.href}
-              className="text-white/60 hover:text-[#C49A6C] transition-colors duration-300 text-[0.7rem] uppercase tracking-[0.2em]"
+              className="text-white/60 hover:text-[#D4943A] transition-colors duration-300 text-[0.7rem] uppercase tracking-[0.2em]"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               {link.label}
@@ -81,12 +81,12 @@ export default function Header() {
           {/* Mobile Cart Icon */}
           <button
             onClick={() => setCartOpen(true)}
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-white hover:text-[#C49A6C] relative cursor-pointer"
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-white hover:text-[#D4943A] relative cursor-pointer"
             aria-label="Cart"
           >
             <span className="text-lg">🛒</span>
             {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 bg-[#C49A6C] text-black text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-0 right-0 w-4 h-4 bg-[#D4943A] text-black text-[9px] font-bold rounded-full flex items-center justify-center">
                 {cartCount}
               </span>
             )}
@@ -123,7 +123,7 @@ export default function Header() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden bg-[#0E0E0E]/95 backdrop-blur-2xl border-t border-white/5 overflow-hidden"
+            className="lg:hidden bg-[#120C09]/95 backdrop-blur-2xl border-t border-white/5 overflow-hidden"
           >
             <div className="px-6 py-8 flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -131,7 +131,7 @@ export default function Header() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-white/70 hover:text-[#C49A6C] transition-colors text-sm uppercase tracking-[0.2em]"
+                  className="text-white/70 hover:text-[#D4943A] transition-colors text-sm uppercase tracking-[0.2em]"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >
                   {link.label}

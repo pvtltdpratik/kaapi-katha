@@ -53,7 +53,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={checkoutStep === "processing" ? undefined : closeCart}
-            className="fixed inset-0 bg-[#0E0E0E]/80 backdrop-blur-sm z-[70] cursor-pointer"
+            className="fixed inset-0 bg-[#120C09]/80 backdrop-blur-sm z-[70] cursor-pointer"
           />
 
           {/* Drawer Panel */}
@@ -62,7 +62,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-screen w-full sm:w-[480px] bg-[#141414]/95 border-l border-white/5 z-[80] shadow-2xl flex flex-col backdrop-blur-xl"
+            className="fixed top-0 right-0 h-screen w-full sm:w-[480px] bg-[#180F0B]/95 border-l border-white/5 z-[80] shadow-2xl flex flex-col backdrop-blur-xl"
           >
             {checkoutStep === "cart" && (
               <>
@@ -71,7 +71,7 @@ export default function CartDrawer() {
                   <div>
                     <h2
                       className="text-xl text-white font-semibold uppercase tracking-wider"
-                      style={{ fontFamily: "var(--font-playfair)" }}
+                      style={{ fontFamily: "var(--font-display)" }}
                     >
                       Your Order
                     </h2>
@@ -91,7 +91,7 @@ export default function CartDrawer() {
                 <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
                   {cart.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-                      <div className="text-[#C49A6C] text-4xl">☕</div>
+                      <div className="text-[#D4943A] text-4xl">☕</div>
                       <p className="text-white/40 text-sm" style={{ fontFamily: "var(--font-inter)" }}>
                         Your cart is empty.<br />Add some crafted coffee to start.
                       </p>
@@ -108,7 +108,7 @@ export default function CartDrawer() {
                       >
                         {/* Item Thumbnail */}
                         <div
-                          className="w-16 h-16 bg-[#1A1A1A] shrink-0"
+                          className="w-16 h-16 bg-[#1D130E] shrink-0"
                           style={{
                             backgroundImage: `url(${item.item.image})`,
                             backgroundSize: "cover",
@@ -121,7 +121,7 @@ export default function CartDrawer() {
                           <h4 className="text-white text-sm font-medium truncate" style={{ fontFamily: "var(--font-inter)" }}>
                             {item.item.name}
                           </h4>
-                          <p className="text-[#C49A6C] text-[0.65rem] uppercase tracking-widest mt-0.5" style={{ fontFamily: "var(--font-mono)" }}>
+                          <p className="text-[#D4943A] text-[0.65rem] uppercase tracking-widest mt-0.5" style={{ fontFamily: "var(--font-mono)" }}>
                             {item.item.price}
                           </p>
 
@@ -129,7 +129,7 @@ export default function CartDrawer() {
                           <div className="flex items-center gap-3 mt-3">
                             <button
                               onClick={() => updateQuantity(item.item.id, item.quantity - 1)}
-                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#C49A6C] transition-colors cursor-pointer text-xs"
+                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#D4943A] transition-colors cursor-pointer text-xs"
                             >
                               -
                             </button>
@@ -138,7 +138,7 @@ export default function CartDrawer() {
                             </span>
                             <button
                               onClick={() => updateQuantity(item.item.id, item.quantity + 1)}
-                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#C49A6C] transition-colors cursor-pointer text-xs"
+                              className="w-6 h-6 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#D4943A] transition-colors cursor-pointer text-xs"
                             >
                               +
                             </button>
@@ -187,12 +187,12 @@ export default function CartDrawer() {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                    className="absolute inset-0 border-2 border-transparent border-t-[#C49A6C] rounded-full"
+                    className="absolute inset-0 border-2 border-transparent border-t-[#D4943A] rounded-full"
                   />
                   <span className="text-3xl">☕</span>
                 </div>
                 <div>
-                  <h3 className="text-white text-lg font-semibold tracking-wider" style={{ fontFamily: "var(--font-playfair)" }}>
+                  <h3 className="text-white text-lg font-semibold tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
                     Brewing Your Order...
                   </h3>
                   <p className="text-white/40 text-xs mt-2 max-w-xs leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>
@@ -209,13 +209,13 @@ export default function CartDrawer() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-                    className="w-20 h-20 bg-[#C49A6C]/10 border border-[#C49A6C] rounded-full flex items-center justify-center mx-auto"
+                    className="w-20 h-20 bg-[#D4943A]/10 border border-[#D4943A] rounded-full flex items-center justify-center mx-auto"
                   >
-                    <span className="text-[#C49A6C] text-3xl">✓</span>
+                    <span className="text-[#D4943A] text-3xl">✓</span>
                   </motion.div>
 
                   <div>
-                    <h3 className="text-white text-2xl font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-playfair)" }}>
+                    <h3 className="text-white text-2xl font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
                       Brew Complete
                     </h3>
                     <p className="text-white/40 text-xs mt-2" style={{ fontFamily: "var(--font-mono)" }}>
@@ -231,7 +231,7 @@ export default function CartDrawer() {
                     className="bg-[#1C1C1C] border border-white/5 p-6 text-left space-y-4 max-w-sm mx-auto"
                   >
                     <div className="border-b border-white/5 pb-3">
-                      <p className="text-[#C49A6C] text-[0.6rem] uppercase tracking-widest font-bold" style={{ fontFamily: "var(--font-mono)" }}>
+                      <p className="text-[#D4943A] text-[0.6rem] uppercase tracking-widest font-bold" style={{ fontFamily: "var(--font-mono)" }}>
                         RECEIPT SUMMARY
                       </p>
                     </div>
@@ -251,7 +251,7 @@ export default function CartDrawer() {
 
                     <div className="border-t border-white/5 pt-3 flex justify-between font-medium">
                       <span className="text-white text-xs uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>Total Paid</span>
-                      <span className="text-[#C49A6C] text-sm" style={{ fontFamily: "var(--font-mono)" }}>${cartTotal.toFixed(2)}</span>
+                      <span className="text-[#D4943A] text-sm" style={{ fontFamily: "var(--font-mono)" }}>${cartTotal.toFixed(2)}</span>
                     </div>
                   </motion.div>
 

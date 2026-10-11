@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-dark: #0E0E0E;
-  --color-dark-lighter: #1A1A1A;
-  --color-dark-card: #141414;
-  --color-accent: #C49A6C;
-  --color-accent-light: #D4AD82;
-  --color-espresso: #6F4E37;
+  --color-dark: #120C09;
+  --color-dark-lighter: #1D130E;
+  --color-dark-card: #180F0B;
+  --color-accent: #D4943A;
+  --color-accent-light: #E3AE62;
+  --color-cream: #F3E8D4;
+  --color-burgundy: #6B1F2A;
+  --color-emerald: #2F6F5B;
+  --color-espresso: #6B1F2A;
   --color-muted: #B5B5B5;
   --color-white: #FFFFFF;
   --color-white-10: rgba(255, 255, 255, 0.1);
   --color-white-5: rgba(255, 255, 255, 0.05);
 
-  --font-playfair: var(--font-playfair), serif;
-  --font-cormorant: var(--font-cormorant), serif;
+  --font-display: var(--font-display), serif;
+  --font-deva: var(--font-deva), serif;
   --font-inter: var(--font-inter), sans-serif;
   --font-mono: var(--font-mono), monospace;
 }
@@ -27,11 +30,11 @@
 
 html {
   scroll-behavior: auto;
-  background-color: #0E0E0E;
+  background-color: #120C09;
 }
 
 body {
-  background-color: #0E0E0E;
+  background-color: #120C09;
   color: #FFFFFF;
   font-family: var(--font-inter), sans-serif;
   overflow-x: hidden;
@@ -45,11 +48,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0E0E0E;
+  background: #120C09;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C49A6C;
+  background: #D4943A;
   border-radius: 3px;
 }
 
@@ -67,8 +70,8 @@ body::after {
 
 /* === SELECTION === */
 ::selection {
-  background: #C49A6C;
-  color: #0E0E0E;
+  background: #D4943A;
+  color: #120C09;
 }
 
 /* === LETTER SPACING UTILITIES === */
@@ -99,7 +102,7 @@ body::after {
 .section-divider {
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #C49A6C, transparent);
+  background: linear-gradient(90deg, transparent, #D4943A, transparent);
 }
 
 /* === CTA BUTTON === */
@@ -112,8 +115,8 @@ body::after {
   font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #0E0E0E;
-  background: #C49A6C;
+  color: #120C09;
+  background: #D4943A;
   border: none;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -122,9 +125,9 @@ body::after {
 }
 
 .btn-cta:hover {
-  background: #D4AD82;
+  background: #E3AE62;
   transform: translateY(-2px);
-  box-shadow: 0 10px 40px rgba(196, 154, 108, 0.3);
+  box-shadow: 0 10px 40px rgba(212, 148, 58, 0.3);
 }
 
 .btn-outline {
@@ -144,11 +147,19 @@ body::after {
 }
 
 .btn-outline:hover {
-  border-color: #C49A6C;
-  color: #C49A6C;
+  border-color: #D4943A;
+  color: #D4943A;
 }
 
 /* === HIDE LENIS SCROLLBAR IF NEEDED === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 html.lenis, html.lenis body {
   height: auto;
 }
