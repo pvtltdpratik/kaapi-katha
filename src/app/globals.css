@@ -15,19 +15,10 @@
   --color-white-10: rgba(255, 255, 255, 0.1);
   --color-white-5: rgba(255, 255, 255, 0.05);
 
-  --font-display: var(--font-display), serif;
-  --font-deva: var(--font-deva), serif;
-  --font-inter: var(--font-inter), sans-serif;
-  --font-mono: var(--font-mono), monospace;
 }
 
-/* === BASE RESET === */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Tailwind's preflight already resets margin/padding. An unlayered `* {}` reset
+   here would out-rank every layered utility (px-6, mb-4, ...), so none is declared. */
 html {
   scroll-behavior: auto;
   background-color: #120C09;
