@@ -29,6 +29,14 @@ Concept, design and development by **Pratik Prashant Kolhe**.
   SVG group), looks at the cursor, and opens a frosted menu of the real
   sections. Its dock never takes pointer events outside the button and the open
   panel.
+- **One scroll clock.** Lenis smooths the scroll and is driven by GSAP's ticker;
+  ScrollTrigger is told whenever Lenis moves (`src/lib/smoothScroll.ts`). The
+  hero opens up and the story copy arrives *with* scroll progress (scrubbed, and
+  reversible). No pinning, so the layout the cup path is measured from never
+  shifts. Without motion preference, Lenis is not started at all.
+- **Small motion pieces** in `src/components/motion`, written in the style of
+  ReactBits (which ships as copy-in source, not a package): `SplitText` word
+  reveal, `ScrollScrub` scroll-tied arrival and photo drift, `TiltCard` hover lean.
 - **One price calculation.** `src/lib/builderConfig.ts` owns the options, the
   price breakdown and the cart id, so the controls, 3D scene and cart agree. The
   same recipe merges into one cart line and carries its configuration.
@@ -40,7 +48,7 @@ Concept, design and development by **Pratik Prashant Kolhe**.
 ## Stack
 
 Next.js 16 · React 19 · Tailwind CSS v4 · three.js + @react-three/fiber ·
-Framer Motion · Lenis · TypeScript. Brand type is Ngetic Modern
+Framer Motion · GSAP + ScrollTrigger · Lenis · TypeScript. Brand type is Ngetic Modern
 (`src/fonts`, swap it in `layout.tsx`), with Inter for text and numerals
 (Ngetic has no digits) and Noto Serif Devanagari for the Hindi line.
 

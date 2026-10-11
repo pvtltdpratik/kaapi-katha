@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Puppy from "./PuppyCompanion";
+import { scrollToHash } from "@/lib/smoothScroll";
 
 /*
  * Puppy companion navigation (replaces the old header).
@@ -390,8 +391,10 @@ export default function PuppyNav() {
     say(next ? "Woof! Where shall we go?" : "See you soon!", 2800);
   };
 
-  const onNavigate = () => {
-    // a quick reaction; the browser follows the link immediately
+  const onNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // glide there with Lenis when it is running, otherwise let the browser jump
+    const hash = e.currentTarget.getAttribute("href") ?? "";
+    if (scrollToHash(hash)) e.preventDefault();
     touched.current = true;
     setMood("happy", 900);
     setBurst((b) => b + 1);
@@ -453,7 +456,7 @@ export default function PuppyNav() {
         {cartCount > 0 && <span className="pup-count" aria-label={`${cartCount} in your order`}>{cartCount}</span>}
       </button>
 
-      <nav id="puppy-menu" className="pup-panel" aria-label="Main" data-open={open}>
+      <nav id="puppy-menu" className="pup-panel" aria-label="Main" data-open={open} data-lenis-prevent>
         <Poppy className="pup-poppy pup-poppy-a" />
         <Poppy className="pup-poppy pup-poppy-b" />
         <p className="pup-wordmark">Kaapi Katha</p>

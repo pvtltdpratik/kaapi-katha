@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { cupInput, cupMode } from "@/lib/cupStore";
+import { gsap, whenMotionAllowed } from "@/lib/gsap";
 
 /** Still illustration, only shown when WebGL is unavailable. */
 function StaticCup() {
@@ -10,7 +10,7 @@ function StaticCup() {
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <svg
         viewBox="0 0 360 300"
-        className="w-[min(60vw,420px)] h-auto rotate-[-12deg] translate-x-[12%]"
+        className="w-[min(60vw,420px)] h-auto rotate-[-12deg]"
         role="img"
         aria-label="A ceramic coffee cup, tilted to the right"
       >
@@ -31,17 +31,50 @@ function StaticCup() {
 }
 
 /*
- * Layering, back to front:
- *   red ground  ->  headline (z-10)  ->  page-wide WebGL cup (z-20)
- *   ->  drag surface (z-25)  ->  supporting copy and buttons (z-30)
- * The cup overlaps the headline on purpose; the things you press never sit under it.
+ * Editorial hero. The brand name is set very large on either side of the cup,
+ * which is the centre of the composition and overlaps the inner edges of both
+ * words. The tagline and actions sit below, above the cup in the stacking
+ * order, so nothing you press is ever under it.
+ *
+ * Back to front:
+ *   red ground -> wordmark (z-10) -> page-wide WebGL cup (z-20)
+ *   -> drag surface (z-25) -> tagline and actions (z-30)
  */
 export default function HeroCanvas() {
   const ref = useRef<HTMLElement>(null);
   const mode = useSyncExternalStore(cupMode.subscribe, cupMode.get, () => "pending" as const);
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
+  // entrance once, then the composition opens up as you scroll away
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    return whenMotionAllowed(() => {
+      const left = root.querySelector<HTMLElement>("[data-side='l']");
+      const right = root.querySelector<HTMLElement>("[data-side='r']");
+      const copy = root.querySelector<HTMLElement>("[data-hero-copy]");
+      const ins = root.querySelectorAll<HTMLElement>("[data-in]");
+
+      const intro = gsap.from(ins, { yPercent: 40, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.12, delay: 0.15 });
+      // entrance on the inner wrapper, scroll scrub on the outer one: they never fight
+      const copyInner = root.querySelector<HTMLElement>("[data-copy-in]");
+      const copyIn = gsap.from(copyInner, { opacity: 0, y: 24, duration: 0.9, ease: "power3.out", delay: 0.7 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: true },
+      });
+      tl.to(left, { xPercent: -22, opacity: 0, ease: "none" }, 0)
+        .to(right, { xPercent: 22, opacity: 0, ease: "none" }, 0)
+        .to(copy, { y: -40, opacity: 0, ease: "none" }, 0);
+
+      return () => {
+        intro.kill();
+        copyIn.kill();
+        tl.scrollTrigger?.kill();
+        tl.kill();
+        gsap.set([left, right, copy, copyInner, ...ins].filter(Boolean) as HTMLElement[], { clearProps: "all" });
+      };
+    });
+  }, []);
 
   const drag = useRef({ x: 0, id: -1 });
   const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -59,6 +92,9 @@ export default function HeroCanvas() {
     cupInput.dragging = false;
   };
 
+  const word =
+    "display text-fg leading-[0.9] text-[clamp(4rem,21vw,6.5rem)] md:text-[clamp(4rem,11.5vw,11.5rem)]";
+
   return (
     <section
       id="home"
@@ -67,21 +103,26 @@ export default function HeroCanvas() {
     >
       {mode === "fallback" && <StaticCup />}
 
-      {/* headline: centred, and the thing the cup sits in front of */}
-      <div className="relative z-10 min-h-[100svh] flex items-center justify-center text-center px-5 pt-24 pb-52 md:pb-44">
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="display text-fg text-[clamp(3rem,10vw,9.5rem)] max-w-[13ch]"
-        >
-          A little more India in every pour.
-        </motion.h1>
+      {/* wordmark: the cup sits between, and over the inner edges of, the two words */}
+      <div className="relative z-10 min-h-[100svh] flex items-center justify-center px-4 pt-10 pb-52 md:pb-44">
+        <h1 className="flex flex-col md:flex-row items-center gap-[38vw] md:gap-[22vw]">
+          <span data-side="l" className="block overflow-hidden">
+            <span data-in className={`block ${word}`}>
+              Kaapi
+            </span>
+          </span>
+          <span className="sr-only"> </span>
+          <span data-side="r" className="block overflow-hidden">
+            <span data-in className={`block ${word}`}>
+              Katha
+            </span>
+          </span>
+        </h1>
       </div>
 
       {/* drag / hover surface for the cup (the canvas itself is click-through) */}
       <div
-        className="absolute z-[25] right-0 top-24 bottom-40 w-[72%] md:w-[58%] cursor-grab active:cursor-grabbing"
+        className="absolute z-[25] left-1/2 -translate-x-1/2 top-20 bottom-48 w-[62%] md:w-[34%] cursor-grab active:cursor-grabbing"
         style={{ touchAction: "pan-y" }}
         onPointerDown={onDown}
         onPointerMove={onMove}
@@ -92,26 +133,26 @@ export default function HeroCanvas() {
         aria-hidden
       />
 
-      {/* supporting copy and actions, above the cup so they are never covered */}
-      <motion.div
-        style={{ opacity: copyOpacity }}
-        className="absolute z-30 inset-x-0 bottom-0 px-5 pb-28 md:pb-12 flex flex-col items-center text-center gap-4"
+      {/* tagline and actions: above the cup, never covered */}
+      <div
+        data-hero-copy
+        className="absolute z-30 inset-x-0 bottom-0 px-5 pb-28 md:pb-12 flex flex-col items-center text-center gap-3"
       >
-        <p className="text-accent text-lg" style={{ fontFamily: "var(--font-deva)" }}>
-          हर घूंट में थोड़ा और भारत
-        </p>
-        <p className="text-fg/80 text-base md:text-lg max-w-md leading-relaxed">
-          Filter coffee the slow way: a strong decoction, hot milk, and a long pour between two cups.
-        </p>
-        <div className="flex items-center gap-7 flex-wrap justify-center mt-1">
-          <a href="#menu" className="btn">
-            See the menu
-          </a>
-          <a href="#customizer" className="link">
-            Build your cup
-          </a>
+        <div data-copy-in className="flex flex-col items-center gap-3">
+          <p className="display text-fg text-[clamp(1.35rem,3vw,2.1rem)]">A little more India in every pour.</p>
+          <p className="text-accent text-base" style={{ fontFamily: "var(--font-deva)" }}>
+            हर घूंट में थोड़ा और भारत
+          </p>
+          <div className="flex items-center gap-7 flex-wrap justify-center mt-2">
+            <a href="#menu" className="btn">
+              See the menu
+            </a>
+            <a href="#customizer" className="link">
+              Build your cup
+            </a>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

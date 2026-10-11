@@ -40,7 +40,7 @@ interface KeyDef {
 
 const DESKTOP_KEYS: KeyDef[] = [
   // hero: large, right of the headline, leaning clockwise
-  { sel: "#home", edge: "top", vp: 0, x: 0.62, y: 0.0, s: 0.95, rz: -13, rx: 20, ry: -30 },
+  { sel: "#home", edge: "top", vp: 0, x: 0.0, y: 0.1, s: 1.05, rz: -13, rx: 20, ry: -30 },
   // story: opposite each passage; the handle stays on the right throughout,
   // so the only things that change are place and size
   { sel: '[data-cup="story-0"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.8, rz: -10, rx: 20, ry: -24 },
@@ -64,7 +64,7 @@ const DESKTOP_KEYS: KeyDef[] = [
  * scrolls away with the hero, and returns as the customizer's preview.
  */
 const MOBILE_KEYS: KeyDef[] = [
-  { sel: "#home", edge: "top", vp: 0, x: 0.28, y: -0.2, s: 1.5, rz: -13, rx: 20, ry: -30 },
+  { sel: "#home", edge: "top", vp: 0, x: 0.0, y: 0.2, s: 1.25, rz: -13, rx: 20, ry: -30 },
   { sel: "#home", edge: "bottom", vp: 0.15, x: 0, y: 1.6, s: 0.001, rz: -14, rx: 24, ry: 10 },
 ];
 

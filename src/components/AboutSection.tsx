@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
+import SplitText from "@/components/motion/SplitText";
 
 export default function AboutSection() {
   return (
@@ -29,9 +30,11 @@ export default function AboutSection() {
           variants={fadeUp}
           className="lg:col-span-6 lg:col-start-7"
         >
-          <h2 className="display text-4xl md:text-6xl text-fg mb-8">
-            A café that doesn&apos;t exist, built carefully.
-          </h2>
+          <SplitText
+            as="h2"
+            text="A café that doesn't exist, built carefully."
+            className="display text-4xl md:text-6xl text-fg mb-8"
+          />
           <div className="space-y-5 text-fg/65 text-base leading-relaxed max-w-lg">
             <p>
               Kaapi Katha is a made-up café: a study in filter coffee, steel tumblers and long

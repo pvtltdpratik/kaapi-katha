@@ -59,6 +59,7 @@ export default function CartDrawer() {
             role="dialog"
             aria-modal="true"
             aria-label="Your order"
+            data-lenis-prevent
           >
             <div className="px-6 md:px-8 py-6 border-b border-fg/10 flex items-center justify-between">
               <h2 className="display text-2xl text-fg">{placed ? "Order placed" : "Your order"}</h2>

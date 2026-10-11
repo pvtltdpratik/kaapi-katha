@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { galleryData } from "@/data/galleryData";
-import { fadeUp } from "@/lib/animations";
+import ScrollScrub from "@/components/motion/ScrollScrub";
+import TiltCard from "@/components/motion/TiltCard";
 
 // Varied scale and offset, so the photographs read as a set rather than a grid.
 const layout = [
@@ -22,35 +23,35 @@ export default function GallerySection() {
   return (
     <section id="gallery" className="theme-yellow bg-ground text-fg relative py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:pl-[36%]">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={fadeUp}
-        >
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4">
-            {galleryData.map((img, i) => (
-              <button
-                key={img.id}
-                type="button"
-                onClick={() => setSelected(img.id)}
-                aria-label={`Enlarge: ${img.alt}`}
-                className={`relative overflow-hidden bg-surface cursor-zoom-in ${layout[i] ?? "lg:col-span-3 aspect-[4/3]"} ${
-                  i === 0 ? "col-span-2" : ""
-                }`}
-              >
-                <span
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage: `url(${img.src})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-              </button>
-            ))}
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4">
+          {galleryData.map((img, i) => (
+            <ScrollScrub
+              key={img.id}
+              y={40 + (i % 3) * 14}
+              start="top 98%"
+              end="top 74%"
+              className={`${layout[i] ?? "lg:col-span-3 aspect-[4/3]"} ${i === 0 ? "col-span-2" : ""}`}
+            >
+              <TiltCard className="w-full h-full overflow-hidden bg-surface" max={5} lift={1.02}>
+                <button
+                  type="button"
+                  onClick={() => setSelected(img.id)}
+                  aria-label={`Enlarge: ${img.alt}`}
+                  className="relative block w-full h-full cursor-zoom-in"
+                >
+                  <span
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `url(${img.src})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                </button>
+              </TiltCard>
+            </ScrollScrub>
+          ))}
+        </div>
       </div>
 
       <AnimatePresence>
@@ -65,6 +66,7 @@ export default function GallerySection() {
             role="dialog"
             aria-modal="true"
             aria-label={current.alt}
+            data-lenis-prevent
           >
             <div
               className="w-full max-w-4xl aspect-[16/10] bg-surface"

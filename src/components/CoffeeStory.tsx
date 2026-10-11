@@ -1,18 +1,20 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { fadeUp } from "@/lib/animations";
+import ScrollScrub from "@/components/motion/ScrollScrub";
+import SplitText from "@/components/motion/SplitText";
 
 /*
  * Three short passages. Text takes one half; the other half stays open for the
- * cup. Each photo is cropped differently and sits differently against its text,
- * so the section doesn't repeat one template three times.
+ * cup, which crosses to the opposite side with each passage. The copy arrives
+ * with the scroll (scrubbed), so as the cup settles beside a passage the passage
+ * has just finished arriving. Photos drift a little against the page.
  */
 const passages = [
   {
     title: "Dark roast, a little chicory.",
     text: "Indian coffee grows in the shade of the Western Ghats. Filter kaapi likes it dark, with a spoon of chicory for body.",
     image: "/images/coffee/story_craft.jpg",
+    alt: "A coffee roaster turning dark beans",
     shape: "aspect-[4/5] w-3/5",
     align: "",
   },
@@ -20,6 +22,7 @@ const passages = [
     title: "Pulled, not stirred.",
     text: "Decoction first, then hot milk. The tumbler and the davara trade it back and forth until it foams and cools to something drinkable.",
     image: "/images/coffee/story_philosophy.jpg",
+    alt: "Hands holding cups of coffee over a wooden table",
     shape: "aspect-[16/10] w-full",
     align: "",
   },
@@ -27,6 +30,7 @@ const passages = [
     title: "A table that doesn't hurry you.",
     text: "The old Irani cafés and coffee houses understood this: one order, a window seat, and nobody checking the time.",
     image: "/images/coffee/story_origin.jpg",
+    alt: "A café sign glowing above a counter",
     shape: "aspect-square w-2/5",
     align: "ml-auto",
   },
@@ -42,28 +46,27 @@ export default function CoffeeStory() {
             data-cup={`story-${i}`}
             className="relative lg:min-h-[80vh] flex items-center py-12 lg:py-0"
           >
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={fadeUp}
-              className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}
-            >
-              <h2 className="display text-3xl md:text-5xl text-fg mb-5">{p.title}</h2>
-              <p className="text-fg/65 text-base leading-relaxed max-w-md mb-8">{p.text}</p>
-              <div className={`overflow-hidden bg-surface ${p.shape} ${p.align}`}>
-                <div
-                  className="w-full h-full"
-                  role="img"
-                  aria-label={p.title}
-                  style={{
-                    backgroundImage: `url(${p.image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-              </div>
-            </motion.div>
+            <div className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}>
+              <SplitText text={p.title} as="h2" className="display text-3xl md:text-5xl text-fg mb-5" />
+              <ScrollScrub y={28} start="top 92%" end="top 62%">
+                <p className="text-fg/70 text-base leading-relaxed max-w-md mb-8">{p.text}</p>
+              </ScrollScrub>
+              <ScrollScrub y={60} start="top 98%" end="top 60%" parallax={7}>
+                <div className={`overflow-hidden bg-surface ${p.shape} ${p.align}`}>
+                  <div
+                    data-parallax
+                    className="w-full h-[118%] -mt-[9%]"
+                    role="img"
+                    aria-label={p.alt}
+                    style={{
+                      backgroundImage: `url(${p.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                </div>
+              </ScrollScrub>
+            </div>
           </div>
         ))}
       </div>
