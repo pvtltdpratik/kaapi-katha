@@ -20,6 +20,7 @@
 /* Tailwind's preflight already resets margin/padding. An unlayered `* {}` reset
    here would out-rank every layered utility (px-6, mb-4, ...), so none is declared. */
 html {
+  overflow-x: clip;
   scroll-behavior: auto;
   background-color: #120C09;
 }
@@ -96,7 +97,9 @@ body::after {
   background: linear-gradient(90deg, transparent, #D4943A, transparent);
 }
 
-/* === CTA BUTTON === */
+/* === CTA BUTTON ===
+   Layered so Tailwind utilities (hidden, md:inline-flex, py-3...) can override them. */
+@layer components {
 .btn-cta {
   display: inline-flex;
   align-items: center;
@@ -140,6 +143,7 @@ body::after {
 .btn-outline:hover {
   border-color: #D4943A;
   color: #D4943A;
+}
 }
 
 /* === HIDE LENIS SCROLLBAR IF NEEDED === */
