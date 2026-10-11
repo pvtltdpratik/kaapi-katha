@@ -1,107 +1,71 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { fadeUp, slideInLeft, slideInRight } from "@/lib/animations";
+import { fadeUp } from "@/lib/animations";
 
-const storyBlocks = [
+/*
+ * Three short passages. Text takes one half; the other half stays open for the
+ * cup. Each photo is cropped differently and sits differently against its text,
+ * so the section doesn't repeat one template three times.
+ */
+const passages = [
   {
-    subtitle: "Roast",
-    title: "Slow, never hurried",
-    text: "Indian coffee grows in the shade of the Western Ghats, between pepper vines and silver oak. A slow roast keeps that mellow, spiced sweetness intact. Filter kaapi loves a dark roast with a little chicory for body.",
+    title: "Dark roast, a little chicory.",
+    text: "Indian coffee grows in the shade of the Western Ghats. Filter kaapi likes it dark, with a spoon of chicory for body.",
     image: "/images/coffee/story_craft.jpg",
+    shape: "aspect-[4/5] w-3/5",
+    align: "",
   },
   {
-    subtitle: "Ritual",
-    title: "Pulled, poured, passed",
-    text: "Decoction goes in, hot milk follows, and the pour travels between tumbler and davara until it froths. It cools the coffee, it is a small performance, and it is why a steel tumbler never feels like a mug.",
+    title: "Pulled, not stirred.",
+    text: "Decoction first, then hot milk. The tumbler and the davara trade it back and forth until it foams and cools to something drinkable.",
     image: "/images/coffee/story_philosophy.jpg",
+    shape: "aspect-[16/10] w-full",
+    align: "",
   },
   {
-    subtitle: "Adda",
-    title: "A table for long talks",
-    text: "From old Irani cafés to coffee-house counters, the best seat was always the one that let a conversation run late. We design for that: warm light, no rush, and a refill when the talking is not done.",
+    title: "A table that doesn't hurry you.",
+    text: "The old Irani cafés and coffee houses understood this: one order, a window seat, and nobody checking the time.",
     image: "/images/coffee/story_origin.jpg",
+    shape: "aspect-square w-2/5",
+    align: "ml-auto",
   },
 ];
 
 export default function CoffeeStory() {
   return (
-    <section id="story" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center">
+    <section id="story" className="relative py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-10">
-        {/* Section Header */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeUp}
-          className="text-center lg:text-left lg:max-w-[48%] mb-16 lg:mb-8"
-        >
-          <p
-            className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
-            style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.35em" }}
+        {passages.map((p, i) => (
+          <div
+            key={p.title}
+            data-cup={`story-${i}`}
+            className="relative lg:min-h-[80vh] flex items-center py-12 lg:py-0"
           >
-            The Story
-          </p>
-          <h2
-            className="text-3xl md:text-5xl lg:text-6xl text-white font-semibold mb-6"
-            style={{ fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}
-          >
-            From the Ghats to{" "}
-            <span className="italic text-[#D4943A]">your glass</span>
-          </h2>
-          <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            Coffee reached India&apos;s hills centuries ago and settled into
-            daily life as a ceremony. This is a small, imagined chapter of that
-            story.
-          </p>
-          <div className="section-divider mx-auto lg:mx-0 mt-8" />
-        </motion.div>
-
-        {/* Story Blocks: text sits on one side, the other half is the cup's lane */}
-        <div className="space-y-24 lg:space-y-0">
-          {storyBlocks.map((block, i) => (
-            <div
-              key={block.subtitle}
-              data-cup={`story-${i}`}
-              className="relative lg:min-h-[78vh] flex items-center"
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={fadeUp}
+              className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}
             >
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-                variants={i % 2 === 0 ? slideInLeft : slideInRight}
-                className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}
-              >
-                <span
-                  className="text-[#D4943A] text-[0.6rem] uppercase block mb-4"
-                  style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.3em" }}
-                >
-                  {String(i + 1).padStart(2, "0")} — {block.subtitle}
-                </span>
-                <h3
-                  className="text-2xl md:text-4xl text-white font-semibold mb-6 leading-tight"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {block.title}
-                </h3>
-                <p className="text-white/55 text-sm md:text-base leading-[1.8] mb-8">
-                  {block.text}
-                </p>
-                <div className="relative aspect-[16/9] max-w-sm overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-[#1D130E]"
-                    style={{
-                      backgroundImage: `url(${block.image})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  <div className="absolute inset-3 border border-white/10" />
-                </div>
-              </motion.div>
-            </div>
-          ))}
-        </div>
+              <h2 className="display text-3xl md:text-5xl text-[#efe6d6] mb-5">{p.title}</h2>
+              <p className="text-[#efe6d6]/65 text-base leading-relaxed max-w-md mb-8">{p.text}</p>
+              <div className={`overflow-hidden bg-[#1b1511] ${p.shape} ${p.align}`}>
+                <div
+                  className="w-full h-full"
+                  role="img"
+                  aria-label={p.title}
+                  style={{
+                    backgroundImage: `url(${p.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useSyncExternalStore } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { cupMode } from "@/lib/cupStore";
 
 /** Still illustration, only shown when WebGL is unavailable. */
@@ -21,13 +21,7 @@ function StaticCup() {
             <stop offset="1" stopColor="#bdb4a4" />
           </linearGradient>
         </defs>
-        <path
-          d="M268 100 C340 90 350 190 270 200"
-          fill="none"
-          stroke="url(#ceramic)"
-          strokeWidth="20"
-          strokeLinecap="round"
-        />
+        <path d="M268 100 C340 90 350 190 270 200" fill="none" stroke="url(#ceramic)" strokeWidth="20" strokeLinecap="round" />
         <path d="M60 70 H270 C270 190 240 250 165 250 C90 250 60 190 60 70 Z" fill="url(#ceramic)" />
         <ellipse cx="165" cy="70" rx="105" ry="22" fill="#efe8da" />
         <ellipse cx="165" cy="74" rx="90" ry="16" fill="#6b4425" />
@@ -38,16 +32,11 @@ function StaticCup() {
 
 export default function HeroCanvas() {
   const ref = useRef<HTMLElement>(null);
-  const reduced = !!useReducedMotion();
   const mode = useSyncExternalStore(cupMode.subscribe, cupMode.get, () => "pending" as const);
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  // headline leaves as the cup moves on
-  const textY = useTransform(scrollYProgress, [0, 0.7], [0, reduced ? 0 : -80]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  // the headline leaves as the cup moves on; that is the only scroll effect here
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
     <section
@@ -55,88 +44,56 @@ export default function HeroCanvas() {
       ref={ref}
       className="relative min-h-screen flex items-end lg:items-center overflow-hidden"
     >
-      {/* soft light behind the cup lane */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 45% 65% at 75% 50%, rgba(212,148,58,0.18), transparent 70%)",
-        }}
-      />
-
       {mode === "fallback" && <StaticCup />}
 
-      {/* the text block is centred inside the space left of the cup lane */}
+      {/* the text block is centred in the space left of the cup lane */}
       <div className="relative z-10 w-full lg:w-[58%] lg:flex lg:justify-center">
-      <motion.div
-        style={{ y: textY, opacity: textOpacity }}
-        className="w-full px-6 md:px-12 lg:px-0 pt-28 pb-14 lg:pb-24 lg:max-w-[36rem]"
-      >
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2 }}
-          className="text-[#E3AE62] text-[0.65rem] md:text-xs uppercase mb-5"
-          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.3em" }}
-        >
-          Kaapi Katha — filter coffee, reimagined
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[2.6rem] sm:text-5xl lg:text-6xl xl:text-7xl text-[#F3E8D4] font-medium leading-[1.04] mb-5"
-          style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.01em" }}
-        >
-          A little more <span className="italic text-[#E3AE62]">India</span> in
-          every pour.
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.7 }}
-          className="text-[#D4943A] text-base md:text-lg mb-6"
-          style={{ fontFamily: "var(--font-deva)" }}
-        >
-          हर घूंट में थोड़ा और भारत
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden sm:block text-white/60 text-sm md:text-base leading-relaxed mb-9 max-w-md"
-        >
-          Decoction dripped slow, milk steamed soft, and a cup that still feels
-          right in your hands. Old rituals, poured for today.
-        </motion.p>
-
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="flex gap-4 flex-wrap"
+          style={{ opacity: textOpacity }}
+          className="w-full px-6 md:px-12 lg:px-0 pt-28 pb-14 lg:pb-24 lg:max-w-[34rem]"
         >
-          <a href="#menu" className="btn-cta">
-            Explore the menu
-          </a>
-          <a href="#story" className="btn-outline">
-            Read the story
-          </a>
-        </motion.div>
-      </motion.div>
-      </div>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="display text-[2.7rem] sm:text-6xl lg:text-[3.4rem] xl:text-[4.5rem] text-[#efe6d6] mb-6"
+          >
+            A little more India in every pour.
+          </motion.h1>
 
-      <div className="absolute bottom-8 left-6 md:left-12 lg:left-20 hidden md:flex items-center gap-3 pointer-events-none">
-        <span className="block w-10 h-[1px] bg-[#D4943A]/60" />
-        <span
-          className="text-white/30 text-[0.6rem] uppercase"
-          style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.25em" }}
-        >
-          Scroll — follow the cup
-        </span>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-[#d19a4f] text-lg mb-5"
+            style={{ fontFamily: "var(--font-deva)" }}
+          >
+            हर घूंट में थोड़ा और भारत
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="hidden sm:block text-[#efe6d6]/65 text-base leading-relaxed mb-9 max-w-sm"
+          >
+            Filter coffee the slow way: a strong decoction, hot milk, and a long pour between two cups.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="flex items-center gap-7 flex-wrap"
+          >
+            <a href="#menu" className="btn">
+              See the menu
+            </a>
+            <a href="#story" className="link">
+              Our story
+            </a>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

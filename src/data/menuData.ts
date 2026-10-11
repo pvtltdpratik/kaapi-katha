@@ -18,7 +18,7 @@ export const menuData: MenuItem[] = [
     name: "Madras Filter Kaapi",
     subtitle: "The Davara Classic",
     description:
-      "Dark decoction, hot milk and a patient pour between tumbler and davara. Frothy on top, comfort underneath.",
+      "Strong decoction, hot milk, pulled until it foams.",
     price: "₹140",
     image: "/images/coffee/menu_custom_5.jpg",
   },
@@ -27,7 +27,7 @@ export const menuData: MenuItem[] = [
     name: "Classic Cold Coffee",
     subtitle: "Thick & Frosty",
     description:
-      "The café-counter favourite: strong coffee blended with cold milk and ice, finished with a cloud of cream.",
+      "Blended with milk and ice, finished with cream.",
     price: "₹180",
     image: "/images/coffee/menu_custom_1.jpg",
   },
@@ -36,7 +36,7 @@ export const menuData: MenuItem[] = [
     name: "Elaichi Latte",
     subtitle: "Warm Spice",
     description:
-      "Espresso and steamed milk scented with crushed green cardamom and a dusting of cinnamon.",
+      "Espresso and steamed milk with crushed cardamom.",
     price: "₹190",
     image: "/images/coffee/menu_custom_3.jpg",
   },
@@ -45,7 +45,7 @@ export const menuData: MenuItem[] = [
     name: "Monsoon Cold Brew",
     subtitle: "Steeped Slow",
     description:
-      "Cold brew steeped overnight and poured over ice. Dark and cool, like the first rain on a hot afternoon.",
+      "Steeped overnight, poured over ice.",
     price: "₹210",
     image: "/images/coffee/menu_custom_4.jpg",
   },
@@ -54,7 +54,7 @@ export const menuData: MenuItem[] = [
     name: "Jaggery Latte",
     subtitle: "Gur Sweet",
     description:
-      "A smooth latte sweetened with dark jaggery instead of sugar, with a deep, caramel-like finish.",
+      "Sweetened with dark jaggery instead of sugar.",
     price: "₹170",
     image: "/images/coffee/menu_psl.jpg",
   },
