@@ -9,19 +9,20 @@ Concept, design and development by **Pratik Prashant Kolhe**.
 
 ## What's inside
 
-- **Real-time 3D hero** — a steel tumbler and brass davara, modelled
-  procedurally (lathe geometry, PBR metals, procedural studio reflections),
-  with drifting coffee beans at several depths, steam, and soft shadows.
-- **Scroll-driven camera** — wide shot → leaning in → looking down into the foam,
-  with the key light sliding across the steel as you scroll.
-- **Cursor parallax** — eased tilt of the product and depth-based bean motion.
-- **Projected hotspots** — three tappable notes anchored to points in 3D space.
-- **Build-your-cup** — a live SVG cup preview with rupee pricing and a cart drawer
-  with a demo checkout (no payment is taken).
-- **Graceful fallbacks** — a still illustration when WebGL is unavailable or the
-  context is lost; `prefers-reduced-motion` stops idle and cursor motion;
-  rendering pauses when the hero is off-screen; fewer beans and a lower pixel
-  ratio on phones.
+- **One cup that travels the page.** A single fixed WebGL canvas holds a
+  procedural ceramic cup (lathe-turned body, swept handle, latte-art crema).
+  Its position, scale, lean and spin are written every frame from
+  `window.scrollY`, so it moves exactly as fast as the reader scrolls.
+- **A path measured from the layout.** Keyframes are anchored to real DOM
+  sections (`CupScene.tsx`), so the cup zig-zags into the free lane opposite
+  each block of text and never needs hard-coded pixel positions.
+- **Live preview.** In *Build Your Cup* the cup lands in the preview slot and
+  responds to size and milk choices.
+- **Build-your-cup and cart** with rupee pricing and a demo checkout (no payment
+  is taken).
+- **Fallbacks.** A still SVG cup when WebGL is unavailable or the context is
+  lost; `prefers-reduced-motion` removes idle motion and damping; phones and
+  tablets use a simpler path (hero, then the customizer preview).
 
 ## Stack
 
@@ -44,8 +45,10 @@ npm run build && npm start
 
 | Path | What it is |
 | --- | --- |
-| `src/components/HeroScene.tsx` | The WebGL scene (tumbler, davara, beans, steam, camera rig) |
-| `src/components/HeroCanvas.tsx` | Hero section: headline, hotspots overlay, fallback logic |
+| `src/components/CupScene.tsx` | The cup, lighting and the scroll-keyframe rig |
+| `src/components/CupStage.tsx` | Fixed canvas host, WebGL detection, error boundary |
+| `src/components/HeroCanvas.tsx` | Hero section: headline and static fallback |
+| `src/lib/cupStore.ts` | Non-reactive bridge between the cup builder and the scene |
 | `src/data/*.ts` | Menu, gallery and ritual copy |
 | `src/context/CartContext.tsx` | Cart state and toasts |
 
