@@ -24,6 +24,11 @@ Concept, design and development by **Pratik Prashant Kolhe**.
   Changing a control updates the glass immediately; Replay pours the *current*
   drink. Drag to turn, tilt within limits, double-click or use Closer to
   inspect, Reset view to return.
+- **A puppy for a navbar.** The header is replaced by a small companion that
+  lives bottom-left. It blinks, tilts, breathes and wags (each part is its own
+  SVG group), looks at the cursor, and opens a frosted menu of the real
+  sections. Its dock never takes pointer events outside the button and the open
+  panel.
 - **One price calculation.** `src/lib/builderConfig.ts` owns the options, the
   price breakdown and the cart id, so the controls, 3D scene and cart agree. The
   same recipe merges into one cart line and carries its configuration.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
-import Header from "@/components/Header";
+import PuppyNav from "@/components/PuppyNav";
 import HeroCanvas from "@/components/HeroCanvas";
 import CupStage from "@/components/CupStage";
 import CoffeeStory from "@/components/CoffeeStory";
@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <main>
-      <Header />
+      <PuppyNav />
       <CupStage />
       <HeroCanvas />
       <CoffeeStory />

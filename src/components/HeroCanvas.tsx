@@ -95,7 +95,7 @@ export default function HeroCanvas() {
       {/* supporting copy and actions, above the cup so they are never covered */}
       <motion.div
         style={{ opacity: copyOpacity }}
-        className="absolute z-30 inset-x-0 bottom-0 px-5 pb-8 md:pb-12 flex flex-col items-center text-center gap-4"
+        className="absolute z-30 inset-x-0 bottom-0 px-5 pb-28 md:pb-12 flex flex-col items-center text-center gap-4"
       >
         <p className="text-accent text-lg" style={{ fontFamily: "var(--font-deva)" }}>
           हर घूंट में थोड़ा और भारत

@@ -11,7 +11,7 @@ const links = [
 export default function Footer() {
   return (
     <footer className="theme-red bg-ground text-fg">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-14">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 pt-14 pb-28 md:pb-14">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10">
           <div>
             <p className="display text-3xl text-fg">Kaapi Katha</p>

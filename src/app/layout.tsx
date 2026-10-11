@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Inter, Noto_Serif_Devanagari } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
+import "./puppy.css";
 
 /*
  * Brand typeface. To change it, drop a new file in src/fonts and edit `src`
