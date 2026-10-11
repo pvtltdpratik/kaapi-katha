@@ -2,15 +2,15 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { cupMode } from "@/lib/cupStore";
+import { cupInput, cupMode } from "@/lib/cupStore";
 
 /** Still illustration, only shown when WebGL is unavailable. */
 function StaticCup() {
   return (
-    <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 flex items-center justify-center pointer-events-none">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <svg
         viewBox="0 0 360 300"
-        className="w-[min(60vw,380px)] h-auto rotate-[-12deg]"
+        className="w-[min(60vw,420px)] h-auto rotate-[-12deg] translate-x-[12%]"
         role="img"
         aria-label="A ceramic coffee cup, tilted to the right"
       >
@@ -30,71 +30,88 @@ function StaticCup() {
   );
 }
 
+/*
+ * Layering, back to front:
+ *   red ground  ->  headline (z-10)  ->  page-wide WebGL cup (z-20)
+ *   ->  drag surface (z-25)  ->  supporting copy and buttons (z-30)
+ * The cup overlaps the headline on purpose; the things you press never sit under it.
+ */
 export default function HeroCanvas() {
   const ref = useRef<HTMLElement>(null);
   const mode = useSyncExternalStore(cupMode.subscribe, cupMode.get, () => "pending" as const);
 
-  // the headline leaves as the cup moves on; that is the only scroll effect here
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
+
+  const drag = useRef({ x: 0, id: -1 });
+  const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current = { x: e.clientX, id: e.pointerId };
+    cupInput.dragging = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!cupInput.dragging || drag.current.id !== e.pointerId) return;
+    const dx = e.clientX - drag.current.x;
+    drag.current.x = e.clientX;
+    cupInput.yaw = Math.min(1.1, Math.max(-1.1, cupInput.yaw + dx * 0.012));
+  };
+  const onUp = () => {
+    cupInput.dragging = false;
+  };
 
   return (
     <section
       id="home"
       ref={ref}
-      className="relative min-h-screen flex items-end lg:items-center overflow-hidden"
+      className="theme-red bg-ground text-fg relative min-h-[100svh] overflow-hidden"
     >
       {mode === "fallback" && <StaticCup />}
 
-      {/* the text block is centred in the space left of the cup lane */}
-      <div className="relative z-10 w-full lg:w-[58%] lg:flex lg:justify-center">
-        <motion.div
-          style={{ opacity: textOpacity }}
-          className="w-full px-6 md:px-12 lg:px-0 pt-28 pb-14 lg:pb-24 lg:max-w-[34rem]"
+      {/* headline: centred, and the thing the cup sits in front of */}
+      <div className="relative z-10 min-h-[100svh] flex items-center justify-center text-center px-5 pt-24 pb-52 md:pb-44">
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="display text-fg text-[clamp(3rem,10vw,9.5rem)] max-w-[13ch]"
         >
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="display text-[2.7rem] sm:text-6xl lg:text-[3.4rem] xl:text-[4.5rem] text-[#efe6d6] mb-6"
-          >
-            A little more India in every pour.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-[#d19a4f] text-lg mb-5"
-            style={{ fontFamily: "var(--font-deva)" }}
-          >
-            हर घूंट में थोड़ा और भारत
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
-            className="hidden sm:block text-[#efe6d6]/65 text-base leading-relaxed mb-9 max-w-sm"
-          >
-            Filter coffee the slow way: a strong decoction, hot milk, and a long pour between two cups.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex items-center gap-7 flex-wrap"
-          >
-            <a href="#menu" className="btn">
-              See the menu
-            </a>
-            <a href="#story" className="link">
-              Our story
-            </a>
-          </motion.div>
-        </motion.div>
+          A little more India in every pour.
+        </motion.h1>
       </div>
+
+      {/* drag / hover surface for the cup (the canvas itself is click-through) */}
+      <div
+        className="absolute z-[25] right-0 top-24 bottom-40 w-[72%] md:w-[58%] cursor-grab active:cursor-grabbing"
+        style={{ touchAction: "pan-y" }}
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerCancel={onUp}
+        onPointerEnter={() => (cupInput.hover = true)}
+        onPointerLeave={() => (cupInput.hover = false)}
+        aria-hidden
+      />
+
+      {/* supporting copy and actions, above the cup so they are never covered */}
+      <motion.div
+        style={{ opacity: copyOpacity }}
+        className="absolute z-30 inset-x-0 bottom-0 px-5 pb-8 md:pb-12 flex flex-col items-center text-center gap-4"
+      >
+        <p className="text-accent text-lg" style={{ fontFamily: "var(--font-deva)" }}>
+          हर घूंट में थोड़ा और भारत
+        </p>
+        <p className="text-fg/80 text-base md:text-lg max-w-md leading-relaxed">
+          Filter coffee the slow way: a strong decoction, hot milk, and a long pour between two cups.
+        </p>
+        <div className="flex items-center gap-7 flex-wrap justify-center mt-1">
+          <a href="#menu" className="btn">
+            See the menu
+          </a>
+          <a href="#customizer" className="link">
+            Build your cup
+          </a>
+        </div>
+      </motion.div>
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { CupBody, Liquid, StudioEnvironment, makeLiquidState, type LiquidState } from "./CupModel";
+import { cupInput } from "@/lib/cupStore";
 
 /* ------------------------------------------------------------------ */
 /* Scroll choreography                                                 */
@@ -39,7 +40,7 @@ interface KeyDef {
 
 const DESKTOP_KEYS: KeyDef[] = [
   // hero: large, right of the headline, leaning clockwise
-  { sel: "#home", edge: "top", vp: 0, x: 0.43, y: 0.0, s: 1.0, rz: -13, rx: 20, ry: -30 },
+  { sel: "#home", edge: "top", vp: 0, x: 0.62, y: 0.0, s: 0.95, rz: -13, rx: 20, ry: -30 },
   // story: opposite each passage; the handle stays on the right throughout,
   // so the only things that change are place and size
   { sel: '[data-cup="story-0"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.8, rz: -10, rx: 20, ry: -24 },
@@ -63,7 +64,7 @@ const DESKTOP_KEYS: KeyDef[] = [
  * scrolls away with the hero, and returns as the customizer's preview.
  */
 const MOBILE_KEYS: KeyDef[] = [
-  { sel: "#home", edge: "top", vp: 0, x: 0, y: 0.5, s: 1.7, rz: -13, rx: 20, ry: -30 },
+  { sel: "#home", edge: "top", vp: 0, x: 0.28, y: -0.2, s: 1.5, rz: -13, rx: 20, ry: -30 },
   { sel: "#home", edge: "bottom", vp: 0.15, x: 0, y: 1.6, s: 0.001, rz: -14, rx: 24, ry: 10 },
 ];
 
@@ -122,6 +123,7 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
   const spin = useRef<THREE.Group>(null);
   const keys = useRef<ResolvedKey[]>([]);
   const cur = useRef<Pose | null>(null);
+  const hover = useRef(0);
   // the hero cup is always a finished latte
   const liquid = useRef<LiquidState>(makeLiquidState());
 
@@ -188,7 +190,10 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
     const time = reducedMotion ? 0 : fs.clock.elapsedTime;
     const bob = Math.sin(time * 0.6) * 0.008;
     const sway = Math.sin(time * 0.45) * 0.005;
-    const turn = 0;
+    // drag input springs back to the intended pose when released
+    if (!cupInput.dragging) cupInput.yaw *= Math.exp(-2.6 * dt);
+    hover.current += ((cupInput.hover && !cupInput.dragging ? 1 : 0) - hover.current) * (1 - Math.exp(-8 * dt));
+    const turn = cupInput.yaw;
 
     // --- viewport -> world -----------------------------------------
     const aspect = fs.size.width / fs.size.height;
@@ -200,7 +205,7 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
     const appear = reducedMotion ? 1 : 1 - Math.pow(1 - Math.min(fs.clock.elapsedTime / 1.4, 1), 3);
 
     root.current.position.set(p.x * halfW, (p.y + bob) * halfH, 0);
-    root.current.scale.setScalar(Math.max(base * p.s * (0.9 + 0.1 * appear), 0.0001));
+    root.current.scale.setScalar(Math.max(base * p.s * (0.9 + 0.1 * appear) * (1 + 0.025 * hover.current), 0.0001));
     tilt.current.rotation.set(p.rx * DEG, 0, p.rz * DEG + sway, "ZXY");
     spin.current.rotation.y = p.ry * DEG + turn;
   });

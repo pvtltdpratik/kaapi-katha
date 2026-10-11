@@ -1,12 +1,13 @@
 /**
- * Tiny module-level bridge between DOM sections and the 3D cup.
+ * Tiny module-level bridge between the DOM and the page-wide 3D cup.
  *
- * `mode` is observable (useSyncExternalStore) because the hero swaps in a static
- * fallback, and CSS hides 2D stand-ins, when WebGL is unavailable.
+ * - `cupMode` is observable (useSyncExternalStore): the hero swaps in a static
+ *   fallback, and CSS hides 2D stand-ins, when WebGL is unavailable.
+ * - `cupInput` is plain mutable state read inside the render loop, so dragging
+ *   the cup never triggers a React render.
  */
 
 export type CupMode = "pending" | "webgl" | "fallback";
-
 
 let mode: CupMode = "pending";
 const listeners = new Set<() => void>();
@@ -25,4 +26,11 @@ export const cupMode = {
     listeners.add(listener);
     return () => listeners.delete(listener);
   },
+};
+
+export const cupInput = {
+  /** extra yaw in radians from the user's drag; springs back when released */
+  yaw: 0,
+  dragging: false,
+  hover: false,
 };
