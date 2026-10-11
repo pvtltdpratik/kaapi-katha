@@ -257,6 +257,10 @@ export default function CupScene({
 }) {
   return (
     <Canvas
+      // R3F's container div sets pointer-events:auto on itself, which beats the
+      // click-through on its fixed parent and swallowed every click on the page
+      // below the hero. This canvas is decorative; the hero has its own drag layer.
+      style={{ pointerEvents: "none" }}
       shadows={{ type: THREE.PCFShadowMap }}
       dpr={[1, mobile ? 1.5 : 1.75]}
       camera={{ fov: FOV, position: [0, 0, DIST], near: 0.1, far: 40 }}
