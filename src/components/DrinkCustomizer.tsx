@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { cupParams } from "@/lib/cupStore";
 
 type CupSize = "Small" | "Regular" | "Large";
 type MilkType = "Whole Milk" | "Oat Milk" | "Almond Milk" | "Coconut Milk";
@@ -54,6 +55,12 @@ export default function DrinkCustomizer() {
 
   const espressoY = liquidBaseY - espressoHeight;
   const milkY = espressoY - milkHeight;
+
+  // feed the 3D cup (read in its render loop, so no React re-render)
+  useEffect(() => {
+    cupParams.sizeScale = size === "Small" ? 0.88 : size === "Regular" ? 1 : 1.14;
+    cupParams.milk = milkHeight / Math.max(liquidMaxHeight, 1);
+  }, [size, milkHeight, liquidMaxHeight]);
 
   const handleAddToOrder = () => {
     const toppingsList = [];
@@ -107,8 +114,8 @@ export default function DrinkCustomizer() {
             </div>
 
             {/* Cup Container */}
-            <div className="relative w-64 h-96 flex items-center justify-center">
-              <svg viewBox="0 0 200 300" className="w-full h-full drop-shadow-2xl overflow-visible">
+            <div id="cup-slot" className="relative w-64 md:w-80 h-96 flex items-center justify-center">
+              <svg viewBox="0 0 200 300" className="preview-fallback w-64 h-full drop-shadow-2xl overflow-visible">
                 <defs>
                   {/* Clip liquid inside the cup */}
                   <clipPath id="cup-clip">

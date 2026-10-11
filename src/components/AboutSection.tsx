@@ -11,7 +11,8 @@ export default function AboutSection() {
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          {/* Left - Visual */}
+          {/* Left - visual; on large screens the 3D cup takes this lane */}
+          <div data-cup="about" className="relative">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -19,7 +20,7 @@ export default function AboutSection() {
             variants={slideInLeft}
             className="relative"
           >
-            <div className="aspect-[4/5] relative overflow-hidden border border-white/10 p-4">
+            <div className="about-photo aspect-[4/5] relative overflow-hidden border border-white/10 p-4">
               <div
                 className="w-full h-full bg-[#1D130E]"
                 style={{
@@ -45,6 +46,7 @@ export default function AboutSection() {
               </span>
             </div>
           </motion.div>
+          </div>
 
           {/* Right - Content */}
           <motion.div
@@ -75,9 +77,10 @@ export default function AboutSection() {
                 affiliated with any existing brand.
               </p>
               <p>
-                The tumbler, the davara and the beans drifting past are
-                modelled procedurally and rendered live in your browser with
-                WebGL. The photographs around them are placeholders.
+                The cup that has been following you down the page is modelled
+                procedurally and rendered live in your browser with WebGL. It
+                reads your scroll position, so it moves exactly as fast as you
+                do. The photographs are placeholders.
               </p>
             </div>
 

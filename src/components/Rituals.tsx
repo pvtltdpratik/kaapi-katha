@@ -21,7 +21,7 @@ export default function Rituals() {
 
   return (
     <section id="rituals" className="relative py-32 md:py-44 bg-[#120C09]">
-      <div className="max-w-5xl mx-auto px-6 md:px-10">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 lg:pr-[38%]">
         {/* Section Header */}
         <motion.div
           initial="hidden"

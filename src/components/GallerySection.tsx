@@ -10,7 +10,7 @@ export default function GallerySection() {
 
   return (
     <section id="gallery" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center">
-      <div className="w-full">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:pl-[36%]">
         {/* Section Header */}
         <motion.div
           initial="hidden"
@@ -40,7 +40,7 @@ export default function GallerySection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
           variants={staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
         >
           {galleryData.map((img) => (
             <motion.div
@@ -50,7 +50,7 @@ export default function GallerySection() {
               onClick={() => setSelectedImage(img.id)}
               className="relative overflow-hidden cursor-pointer group"
             >
-              <div className="aspect-square relative overflow-hidden">
+              <div className="aspect-[4/3] relative overflow-hidden">
                 <div
                   className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
                   style={{

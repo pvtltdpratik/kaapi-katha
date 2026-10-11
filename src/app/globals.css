@@ -166,3 +166,24 @@ html.lenis, html.lenis body {
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
+/* === SCROLL-DRIVEN CUP ===
+   The WebGL cup replaces these 2D stand-ins whenever the stage is running. */
+html[data-cup-stage="webgl"] .preview-fallback {
+  visibility: hidden;
+}
+
+@media (min-width: 1024px) {
+  html[data-cup-stage="webgl"] .about-photo {
+    visibility: hidden;
+  }
+}
+
+@keyframes cup-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cup-stage {
+  animation: cup-in 1.2s ease-out both;
+}

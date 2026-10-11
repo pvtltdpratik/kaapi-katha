@@ -34,7 +34,7 @@ export default function CoffeeStory() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeUp}
-          className="text-center mb-24"
+          className="text-center lg:text-left lg:max-w-[48%] mb-16 lg:mb-8"
         >
           <p
             className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
@@ -49,37 +49,32 @@ export default function CoffeeStory() {
             From the Ghats to{" "}
             <span className="italic text-[#D4943A]">your glass</span>
           </h2>
-          <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-white/40 text-sm md:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
             Coffee reached India&apos;s hills centuries ago and settled into
             daily life as a ceremony. This is a small, imagined chapter of that
             story.
           </p>
-          <div className="section-divider mx-auto mt-8" />
+          <div className="section-divider mx-auto lg:mx-0 mt-8" />
         </motion.div>
 
-        {/* Story Blocks */}
-        <div className="space-y-32 md:space-y-44">
+        {/* Story Blocks: text sits on one side, the other half is the cup's lane */}
+        <div className="space-y-24 lg:space-y-0">
           {storyBlocks.map((block, i) => (
             <div
               key={block.subtitle}
-              className={`flex flex-col ${
-                i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-              } items-center gap-12 md:gap-20`}
+              data-cup={`story-${i}`}
+              className="relative lg:min-h-[78vh] flex items-center"
             >
-              {/* Text Side */}
               <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-80px" }}
                 variants={i % 2 === 0 ? slideInLeft : slideInRight}
-                className="flex-1 max-w-lg"
+                className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}
               >
                 <span
                   className="text-[#D4943A] text-[0.6rem] uppercase block mb-4"
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    letterSpacing: "0.3em",
-                  }}
+                  style={{ fontFamily: "var(--font-mono)", letterSpacing: "0.3em" }}
                 >
                   {String(i + 1).padStart(2, "0")} — {block.subtitle}
                 </span>
@@ -89,20 +84,10 @@ export default function CoffeeStory() {
                 >
                   {block.title}
                 </h3>
-                <p className="text-white/50 text-sm md:text-base leading-[1.8]">
+                <p className="text-white/55 text-sm md:text-base leading-[1.8] mb-8">
                   {block.text}
                 </p>
-              </motion.div>
-
-              {/* Image Side */}
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-                variants={i % 2 === 0 ? slideInRight : slideInLeft}
-                className="flex-1 w-full max-w-lg"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden group">
+                <div className="relative aspect-[16/9] max-w-sm overflow-hidden">
                   <div
                     className="absolute inset-0 bg-[#1D130E]"
                     style={{
@@ -111,9 +96,7 @@ export default function CoffeeStory() {
                       backgroundPosition: "center",
                     }}
                   />
-                  <div className="absolute inset-0 bg-[#120C09]/20 group-hover:bg-[#120C09]/10 transition-all duration-700" />
-                  {/* Frame Border */}
-                  <div className="absolute inset-4 border border-white/10" />
+                  <div className="absolute inset-3 border border-white/10" />
                 </div>
               </motion.div>
             </div>

@@ -12,14 +12,14 @@ export default function MenuGrid() {
 
   return (
     <section id="menu" className="relative min-h-screen py-32 md:py-44 bg-[#120C09] flex flex-col justify-center overflow-hidden">
-      <div className="w-full">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:pr-[36%]">
         {/* Section Header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeUp}
-          className="text-center mb-24 max-w-4xl mx-auto px-6"
+          className="text-center lg:text-left mb-16 max-w-4xl"
         >
           <p
             className="text-[#D4943A] text-[0.65rem] uppercase mb-4"
@@ -34,7 +34,7 @@ export default function MenuGrid() {
             Poured for every{" "}
             <span className="italic text-[#D4943A]">mood</span>
           </h2>
-          <div className="section-divider mx-auto mt-8" />
+          <div className="section-divider mx-auto lg:mx-0 mt-8" />
         </motion.div>
 
         {/* Bento Grid - Full Width */}
@@ -43,7 +43,7 @@ export default function MenuGrid() {
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
           variants={staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 h-full"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
         >
           {menuData.map((item, index) => (
             <motion.div
@@ -61,9 +61,7 @@ export default function MenuGrid() {
               onFocus={() => setHoveredId(item.id)}
               onBlur={() => setHoveredId(null)}
               className={`group relative overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3AE62] ${
-                index === 0
-                  ? "lg:col-span-2 lg:row-span-2"
-                  : ""
+                index === 0 ? "sm:col-span-2" : ""
               }`}
               onMouseEnter={() => setHoveredId(item.id)}
               onMouseLeave={() => setHoveredId(null)}
@@ -71,7 +69,7 @@ export default function MenuGrid() {
             >
               <div
                 className={`relative overflow-hidden ${
-                  index === 0 ? "aspect-square" : "aspect-[4/3] lg:aspect-auto lg:h-[45vh]"
+                  index === 0 ? "aspect-[16/9]" : "aspect-[4/3]"
                 }`}
               >
                 {/* Background Image */}
