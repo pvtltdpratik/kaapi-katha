@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Space_Mono, Noto_Serif_Devanagari } from "next/font/google";
+import { Fraunces, Inter, Noto_Serif_Devanagari } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
@@ -11,7 +11,7 @@ const fraunces = Fraunces({
 
 const devanagari = Noto_Serif_Devanagari({
   subsets: ["devanagari"],
-  weight: ["400", "600"],
+  weight: ["400"],
   variable: "--font-deva",
 });
 
@@ -20,31 +20,16 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-mono",
-});
-
 export const metadata: Metadata = {
-  title: "Kaapi Katha — A Little More India in Every Pour",
+  title: "Kaapi Katha — A little more India in every pour",
   description:
-    "An interactive 3D coffee experience: filter kaapi, steel tumblers and café rituals, reimagined for today. A creative project by Pratik Prashant Kolhe.",
-  keywords: [
-    "filter coffee",
-    "kaapi",
-    "Indian café",
-    "specialty coffee",
-    "3D website",
-    "Three.js",
-    "Next.js",
-  ],
+    "A fictional filter-coffee café, built as an interactive 3D web experience by Pratik Prashant Kolhe.",
   authors: [{ name: "Pratik Prashant Kolhe" }],
   creator: "Pratik Prashant Kolhe",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#120C09",
+  themeColor: "#14100d",
 };
 
 export default function RootLayout({
@@ -55,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${fraunces.variable} ${devanagari.variable} ${spaceMono.variable} bg-[#120C09] text-white antialiased`}
+        className={`${inter.variable} ${fraunces.variable} ${devanagari.variable} bg-[#14100d] text-[#efe6d6] antialiased`}
         suppressHydrationWarning
       >
         <CartProvider>{children}</CartProvider>

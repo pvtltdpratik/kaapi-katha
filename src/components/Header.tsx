@@ -1,155 +1,85 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
   { label: "Story", href: "#story" },
   { label: "Menu", href: "#menu" },
-  { label: "Build a Cup", href: "#customizer" },
-  { label: "Moments", href: "#gallery" },
+  { label: "Build a cup", href: "#customizer" },
+  { label: "Gallery", href: "#gallery" },
   { label: "About", href: "#about" },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { cartCount, setCartOpen } = useCart();
 
-  const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 80);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-[#120C09]/80 backdrop-blur-xl border-b border-white/5"
-          : "bg-transparent"
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
+        scrolled || open ? "bg-[#14100d]/95 border-b border-white/10" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between h-20">
-        {/* Logo */}
-        <a href="#home" className="flex items-center gap-2 group whitespace-nowrap">
-          <span
-            className="text-[#F3E8D4] text-lg sm:text-xl font-medium tracking-[0.02em]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Kaapi Katha
-          </span>
-          <span
-            className="text-[#D4943A] text-[0.55rem] uppercase tracking-[0.3em] hidden sm:inline"
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            Filter Coffee
-          </span>
+      <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
+        <a href="#home" className="display text-xl md:text-2xl text-[#efe6d6]">
+          Kaapi Katha
         </a>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-10">
-          {navLinks.map((link) => (
+        <nav className="hidden lg:flex items-center gap-9" aria-label="Main">
+          {navLinks.map((l) => (
             <a
-              key={link.label}
-              href={link.href}
-              className="text-white/60 hover:text-[#D4943A] transition-colors duration-300 text-[0.7rem] uppercase tracking-[0.2em]"
-              style={{ fontFamily: "var(--font-mono)" }}
+              key={l.href}
+              href={l.href}
+              className="text-sm text-[#efe6d6]/70 hover:text-[#efe6d6] transition-colors"
             >
-              {link.label}
+              {l.label}
             </a>
           ))}
         </nav>
 
-        {/* CTA + Mobile Toggle */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setCartOpen(true)}
-            className="relative hidden md:inline-flex btn-cta text-[0.6rem] py-3 px-6 cursor-pointer"
+            className="text-sm text-[#efe6d6] border border-white/25 hover:border-[#d19a4f] hover:text-[#d19a4f] transition-colors px-4 py-2 cursor-pointer"
           >
-            YOUR ORDER ({cartCount})
+            Order{cartCount > 0 ? ` (${cartCount})` : ""}
           </button>
-
-          {/* Mobile Cart Icon */}
           <button
-            onClick={() => setCartOpen(true)}
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-white hover:text-[#D4943A] relative cursor-pointer"
-            aria-label="Open your order"
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="lg:hidden px-3 py-2 text-sm text-[#efe6d6] cursor-pointer"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
           >
-            <span className="text-lg">🛒</span>
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 bg-[#D4943A] text-black text-[9px] font-bold rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-            aria-label="Menu"
-          >
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-[1.5px] bg-white"
-            />
-            <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-6 h-[1.5px] bg-white"
-            />
-            <motion.span
-              animate={
-                mobileOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }
-              }
-              className="block w-6 h-[1.5px] bg-white"
-            />
+            {open ? "Close" : "Menu"}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden bg-[#120C09]/95 backdrop-blur-2xl border-t border-white/5 overflow-hidden"
-          >
-            <div className="px-6 py-8 flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-white/70 hover:text-[#D4943A] transition-colors text-sm uppercase tracking-[0.2em]"
-                  style={{ fontFamily: "var(--font-mono)" }}
-                >
-                  {link.label}
-                </a>
-              ))}
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  setCartOpen(true);
-                }}
-                className="btn-cta text-center text-[0.65rem] mt-4 cursor-pointer"
-              >
-                YOUR ORDER ({cartCount})
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+      {open && (
+        <nav id="mobile-nav" className="lg:hidden px-6 pb-8 pt-2 flex flex-col" aria-label="Main">
+          {navLinks.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="display text-3xl py-3 border-b border-white/10 text-[#efe6d6]"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+      )}
+    </header>
   );
 }

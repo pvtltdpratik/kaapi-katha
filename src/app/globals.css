@@ -1,174 +1,110 @@
 @import "tailwindcss";
 
+/*
+ * Kaapi Katha
+ * One dark ground, one warm accent. Type does the work: Fraunces for the voice,
+ * Inter for everything you read or press. No glows, no glass, no grain.
+ */
 @theme inline {
-  --color-dark: #120C09;
-  --color-dark-lighter: #1D130E;
-  --color-dark-card: #180F0B;
-  --color-accent: #D4943A;
-  --color-accent-light: #E3AE62;
-  --color-cream: #F3E8D4;
-  --color-burgundy: #6B1F2A;
-  --color-emerald: #2F6F5B;
-  --color-espresso: #6B1F2A;
-  --color-muted: #B5B5B5;
-  --color-white: #FFFFFF;
-  --color-white-10: rgba(255, 255, 255, 0.1);
-  --color-white-5: rgba(255, 255, 255, 0.05);
-
+  --color-ground: #14100d;
+  --color-surface: #1b1511;
+  --color-ink: #efe6d6;
+  --color-accent: #d19a4f;
 }
 
-/* Tailwind's preflight already resets margin/padding. An unlayered `* {}` reset
-   here would out-rank every layered utility (px-6, mb-4, ...), so none is declared. */
 html {
   overflow-x: clip;
   scroll-behavior: auto;
-  background-color: #120C09;
+  background-color: #14100d;
 }
 
 body {
-  background-color: #120C09;
-  color: #FFFFFF;
-  font-family: var(--font-inter), sans-serif;
+  background-color: #14100d;
+  color: #efe6d6;
+  font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* === SCROLLBAR === */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #120C09;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4943A;
-  border-radius: 3px;
-}
-
-/* === FILM GRAIN OVERLAY === */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-}
-
-/* === SELECTION === */
 ::selection {
-  background: #D4943A;
-  color: #120C09;
+  background: #d19a4f;
+  color: #14100d;
 }
 
-/* === LETTER SPACING UTILITIES === */
-.tracking-luxury {
-  letter-spacing: 0.2em;
+:focus-visible {
+  outline: 2px solid #d19a4f;
+  outline-offset: 3px;
 }
 
-.tracking-ultra {
-  letter-spacing: 0.35em;
+/* Display type: used for every headline so the voice stays consistent */
+.display {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
 }
 
-/* === GLASS MORPHISM === */
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-strong {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* === SECTION DIVIDER === */
-.section-divider {
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #D4943A, transparent);
-}
-
-/* === CTA BUTTON ===
-   Layered so Tailwind utilities (hidden, md:inline-flex, py-3...) can override them. */
+/* Layered so Tailwind utilities can override them */
 @layer components {
-.btn-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #120C09;
-  background: #D4943A;
-  border: none;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #14100d;
+    background: #efe6d6;
+    border: 1px solid #efe6d6;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .btn:hover {
+    background: #d19a4f;
+    border-color: #d19a4f;
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #efe6d6;
+    border-bottom: 1px solid rgba(239, 230, 214, 0.35);
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .link:hover {
+    color: #d19a4f;
+    border-color: #d19a4f;
+  }
 }
 
-.btn-cta:hover {
-  background: #E3AE62;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 40px rgba(212, 148, 58, 0.3);
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
 
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem 2rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-outline:hover {
-  border-color: #D4943A;
-  color: #D4943A;
-}
-}
-
-/* === HIDE LENIS SCROLLBAR IF NEEDED === */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-/* === SCROLL-DRIVEN CUP ===
-   The WebGL cup replaces the About photo on large screens. */
+/* The WebGL cup takes the About photo's place on large screens. */
 @media (min-width: 1024px) {
   html[data-cup-stage="webgl"] .about-photo {
     visibility: hidden;
@@ -176,10 +112,14 @@ html.lenis, html.lenis body {
 }
 
 @keyframes cup-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .cup-stage {
-  animation: cup-in 1.2s ease-out both;
+  animation: cup-in 1s ease-out both;
 }

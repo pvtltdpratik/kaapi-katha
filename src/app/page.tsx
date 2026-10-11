@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
-import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import HeroCanvas from "@/components/HeroCanvas";
 import CupStage from "@/components/CupStage";
@@ -17,35 +15,22 @@ import CartDrawer from "@/components/CartDrawer";
 import ToastContainer from "@/components/ToastContainer";
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
-
   useSmoothScroll();
 
-  const handleLoadComplete = useCallback(() => {
-    setIsLoaded(true);
-  }, []);
-
   return (
-    <>
-      <Loader onComplete={handleLoadComplete} />
-
-      {isLoaded && (
-        <main>
-          <Header />
-          <CupStage />
-          <HeroCanvas />
-          <CoffeeStory />
-          <MenuGrid />
-          <DrinkCustomizer />
-          <GallerySection />
-          <Rituals />
-          <AboutSection />
-          <Footer />
-          <CartDrawer />
-          <ToastContainer />
-        </main>
-      )}
-    </>
+    <main>
+      <Header />
+      <CupStage />
+      <HeroCanvas />
+      <CoffeeStory />
+      <MenuGrid />
+      <DrinkCustomizer />
+      <GallerySection />
+      <Rituals />
+      <AboutSection />
+      <Footer />
+      <CartDrawer />
+      <ToastContainer />
+    </main>
   );
 }
-
