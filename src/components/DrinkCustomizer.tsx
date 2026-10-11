@@ -4,43 +4,43 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 
-type CupSize = "Tall" | "Grande" | "Venti";
+type CupSize = "Small" | "Regular" | "Large";
 type MilkType = "Whole Milk" | "Oat Milk" | "Almond Milk" | "Coconut Milk";
-type SyrupType = "Vanilla" | "Caramel" | "Hazelnut" | "None";
+type SyrupType = "Jaggery" | "Cardamom" | "Rose" | "None";
 
 export default function DrinkCustomizer() {
   const { addToCart, setCartOpen } = useCart();
 
   // Customizer state
-  const [size, setSize] = useState<CupSize>("Grande");
-  const [milk, setMilk] = useState<MilkType>("Oat Milk");
+  const [size, setSize] = useState<CupSize>("Regular");
+  const [milk, setMilk] = useState<MilkType>("Whole Milk");
   const [shots, setShots] = useState<number>(2);
-  const [syrup, setSyrup] = useState<SyrupType>("Vanilla");
+  const [syrup, setSyrup] = useState<SyrupType>("Jaggery");
   const [syrupPumps, setSyrupPumps] = useState<number>(2);
-  const [whippedCream, setWhippedCream] = useState<boolean>(true);
-  const [caramelDrizzle, setCaramelDrizzle] = useState<boolean>(true);
+  const [whippedCream, setWhippedCream] = useState<boolean>(false);
+  const [caramelDrizzle, setCaramelDrizzle] = useState<boolean>(false);
   const [cinnamon, setCinnamon] = useState<boolean>(false);
 
   // Price Calculation
   const getBasePrice = () => {
     switch (size) {
-      case "Tall":
-        return 3.95;
-      case "Grande":
-        return 4.50;
-      case "Venti":
-        return 4.95;
+      case "Small":
+        return 120;
+      case "Regular":
+        return 150;
+      case "Large":
+        return 180;
     }
   };
 
-  const getMilkPrice = () => (milk === "Whole Milk" ? 0 : 0.70);
-  const getShotsPrice = () => Math.max(0, shots - 1) * 0.80; // 1 shot included, extra is $0.80 each
-  const getSyrupPrice = () => (syrup === "None" ? 0 : syrupPumps * 0.15);
+  const getMilkPrice = () => (milk === "Whole Milk" ? 0 : 30);
+  const getShotsPrice = () => Math.max(0, shots - 1) * 40; // 1 shot included, extra is ₹40 each
+  const getSyrupPrice = () => (syrup === "None" ? 0 : syrupPumps * 10);
   const getToppingsPrice = () => {
     let total = 0;
-    if (whippedCream) total += 0.50;
-    if (caramelDrizzle) total += 0.40;
-    if (cinnamon) total += 0.20;
+    if (whippedCream) total += 30;
+    if (caramelDrizzle) total += 20;
+    if (cinnamon) total += 10;
     return total;
   };
 
@@ -48,7 +48,7 @@ export default function DrinkCustomizer() {
 
   // SVG parameters
   const liquidBaseY = 260;
-  const liquidMaxHeight = size === "Tall" ? 150 : size === "Grande" ? 190 : 230;
+  const liquidMaxHeight = size === "Small" ? 150 : size === "Regular" ? 190 : 230;
   const espressoHeight = shots * 35;
   const milkHeight = Math.max(0, liquidMaxHeight - espressoHeight);
 
@@ -57,20 +57,20 @@ export default function DrinkCustomizer() {
 
   const handleAddToOrder = () => {
     const toppingsList = [];
-    if (whippedCream) toppingsList.push("Whipped Cream");
-    if (caramelDrizzle) toppingsList.push("Caramel Drizzle");
-    if (cinnamon) toppingsList.push("Cinnamon Powder");
+    if (whippedCream) toppingsList.push("Fresh Cream");
+    if (caramelDrizzle) toppingsList.push("Jaggery Drizzle");
+    if (cinnamon) toppingsList.push("Cinnamon");
 
     const toppingsStr = toppingsList.length > 0 ? ` + Toppings: ${toppingsList.join(", ")}` : "";
     const syrupStr = syrup !== "None" && syrupPumps > 0 ? ` + ${syrupPumps} pumps ${syrup}` : "";
 
     const item = {
       id: Date.now(), // Unique ID for custom drink
-      name: `Custom Crafted ${size}`,
+      name: `Your Kaapi (${size})`,
       subtitle: `${milk}${syrupStr}${toppingsStr}`,
-      price: `$${totalPrice.toFixed(2)}`,
+      price: `₹${totalPrice}`,
       image: "/images/coffee/menu_custom_5.jpg",
-      description: `A custom-tailored ${size} beverage crafted with ${milk}, ${shots} shots, and premium ingredients.`,
+      description: `A ${size.toLowerCase()} cup built by you: ${milk}, ${shots} ${shots === 1 ? "shot" : "shots"} of espresso.`,
     };
 
     addToCart(item);
@@ -88,13 +88,13 @@ export default function DrinkCustomizer() {
           <span
             className="text-[#D4943A] text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.3em] block mb-3 font-mono font-bold"
           >
-            Artisan Customizer
+            Your Cup, Your Way
           </span>
           <h2
             className="text-3xl md:text-5xl text-white font-semibold uppercase tracking-wider"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Craft Your Cup
+            Build Your Cup
           </h2>
           <div className="w-12 h-[1px] bg-[#D4943A] mx-auto mt-4" />
         </div>
@@ -205,10 +205,10 @@ export default function DrinkCustomizer() {
                   )}
                 </AnimatePresence>
 
-                {/* Circular Starbucks-style badge */}
+                {/* Round monogram badge */}
                 <circle cx="100" cy="140" r="26" fill="#180F0B" stroke="rgba(255,255,255,0.15)" strokeWidth="2" />
                 <path d="M 85,140 C 85,120 115,120 115,140 C 115,150 85,150 85,140 Z" fill="none" stroke="#D4943A" strokeWidth="1.5" />
-                <text x="100" y="143" fill="#D4943A" fontSize="6" fontWeight="bold" textAnchor="middle" letterSpacing="1">S.B.</text>
+                <text x="100" y="143" fill="#D4943A" fontSize="6" fontWeight="bold" textAnchor="middle" letterSpacing="1">K·K</text>
 
                 {/* Cup Rim */}
                 <ellipse cx="100" cy="20" rx="55" ry="8" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
@@ -217,7 +217,7 @@ export default function DrinkCustomizer() {
 
             <div className="mt-8 text-center">
               <span className="text-white/40 text-[0.65rem] tracking-wider uppercase font-mono">ESTIMATED PRICE</span>
-              <p className="text-3xl text-white font-semibold mt-1 font-mono">${totalPrice.toFixed(2)}</p>
+              <p className="text-3xl text-white font-semibold mt-1 font-mono">₹{totalPrice}</p>
             </div>
           </div>
 
@@ -227,7 +227,7 @@ export default function DrinkCustomizer() {
             <div>
               <label className="text-white/40 text-[0.65rem] tracking-wider uppercase block mb-3 font-mono">1. Choose Size</label>
               <div className="grid grid-cols-3 gap-3">
-                {(["Tall", "Grande", "Venti"] as CupSize[]).map((s) => (
+                {(["Small", "Regular", "Large"] as CupSize[]).map((s) => (
                   <button
                     key={s}
                     onClick={() => setSize(s)}
@@ -301,9 +301,9 @@ export default function DrinkCustomizer() {
                   className="w-full bg-[#180F0B] border border-white/10 text-white text-xs tracking-wider p-3 focus:outline-none focus:border-[#D4943A] rounded-none cursor-pointer"
                 >
                   <option value="None">NONE</option>
-                  <option value="Vanilla">VANILLA</option>
-                  <option value="Caramel">CARAMEL</option>
-                  <option value="Hazelnut">HAZELNUT</option>
+                  <option value="Jaggery">JAGGERY</option>
+                  <option value="Cardamom">CARDAMOM</option>
+                  <option value="Rose">ROSE</option>
                 </select>
               </div>
 
@@ -344,8 +344,8 @@ export default function DrinkCustomizer() {
                       : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                   }`}
                 >
-                  <span>WHIPPED CREAM</span>
-                  <span className="text-[9px] font-mono opacity-80">+$0.50</span>
+                  <span>FRESH CREAM</span>
+                  <span className="text-[9px] font-mono opacity-80">+₹30</span>
                 </button>
                 <button
                   onClick={() => setCaramelDrizzle(!caramelDrizzle)}
@@ -355,8 +355,8 @@ export default function DrinkCustomizer() {
                       : "border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                   }`}
                 >
-                  <span>CARAMEL DRIZZLE</span>
-                  <span className="text-[9px] font-mono opacity-80">+$0.40</span>
+                  <span>JAGGERY DRIZZLE</span>
+                  <span className="text-[9px] font-mono opacity-80">+₹20</span>
                 </button>
                 <button
                   onClick={() => setCinnamon(!cinnamon)}
@@ -367,7 +367,7 @@ export default function DrinkCustomizer() {
                   }`}
                 >
                   <span>CINNAMON</span>
-                  <span className="text-[9px] font-mono opacity-80">+$0.20</span>
+                  <span className="text-[9px] font-mono opacity-80">+₹10</span>
                 </button>
               </div>
             </div>
@@ -378,7 +378,7 @@ export default function DrinkCustomizer() {
                 onClick={handleAddToOrder}
                 className="w-full btn-cta text-center justify-center font-bold text-xs tracking-widest py-4 cursor-pointer"
               >
-                ADD CUSTOM CUP TO ORDER
+                ADD MY CUP TO ORDER
               </button>
             </div>
           </div>

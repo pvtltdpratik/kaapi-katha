@@ -1,5 +1,6 @@
 "use client";
 
+import { formatINR, parsePrice } from "@/lib/utils";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
@@ -21,7 +22,7 @@ export default function CartDrawer() {
   const handleCheckout = () => {
     setCheckoutStep("processing");
     // Generate a mock order number
-    const mockOrderNum = "SBC-" + Math.floor(100000 + Math.random() * 900000);
+    const mockOrderNum = "KK-" + Math.floor(100000 + Math.random() * 900000);
     setOrderNumber(mockOrderNum);
 
     // Simulate brewing / processing
@@ -76,7 +77,7 @@ export default function CartDrawer() {
                       Your Order
                     </h2>
                     <p className="text-white/40 text-[0.65rem] uppercase tracking-widest mt-1" style={{ fontFamily: "var(--font-mono)" }}>
-                      Starbucks Experience
+                      Kaapi Katha
                     </p>
                   </div>
                   <button
@@ -93,7 +94,7 @@ export default function CartDrawer() {
                     <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
                       <div className="text-[#D4943A] text-4xl">☕</div>
                       <p className="text-white/40 text-sm" style={{ fontFamily: "var(--font-inter)" }}>
-                        Your cart is empty.<br />Add some crafted coffee to start.
+                        Nothing here yet.<br />Pick something from the counter to begin.
                       </p>
                     </div>
                   ) : (
@@ -165,7 +166,7 @@ export default function CartDrawer() {
                         Subtotal
                       </span>
                       <span className="text-white text-2xl font-semibold" style={{ fontFamily: "var(--font-mono)" }}>
-                        ${cartTotal.toFixed(2)}
+                        {formatINR(cartTotal)}
                       </span>
                     </div>
 
@@ -193,10 +194,10 @@ export default function CartDrawer() {
                 </div>
                 <div>
                   <h3 className="text-white text-lg font-semibold tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-                    Brewing Your Order...
+                    Pouring your order...
                   </h3>
                   <p className="text-white/40 text-xs mt-2 max-w-xs leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>
-                    Our master baristas are preparing your custom blend with precision.
+                    Decoction on, milk warming. This is a demo, so nothing is actually being made.
                   </p>
                 </div>
               </div>
@@ -216,7 +217,7 @@ export default function CartDrawer() {
 
                   <div>
                     <h3 className="text-white text-2xl font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-display)" }}>
-                      Brew Complete
+                      Order Poured
                     </h3>
                     <p className="text-white/40 text-xs mt-2" style={{ fontFamily: "var(--font-mono)" }}>
                       Order ID: {orderNumber}
@@ -243,20 +244,20 @@ export default function CartDrawer() {
                             {c.item.name} <span className="text-white/30 text-[10px]">x{c.quantity}</span>
                           </span>
                           <span className="text-white/80" style={{ fontFamily: "var(--font-mono)" }}>
-                            ${(parseFloat(c.item.price.replace("$", "")) * c.quantity).toFixed(2)}
+                            {formatINR(parsePrice(c.item.price) * c.quantity)}
                           </span>
                         </div>
                       ))}
                     </div>
 
                     <div className="border-t border-white/5 pt-3 flex justify-between font-medium">
-                      <span className="text-white text-xs uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>Total Paid</span>
-                      <span className="text-[#D4943A] text-sm" style={{ fontFamily: "var(--font-mono)" }}>${cartTotal.toFixed(2)}</span>
+                      <span className="text-white text-xs uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)" }}>Total</span>
+                      <span className="text-[#D4943A] text-sm" style={{ fontFamily: "var(--font-mono)" }}>{formatINR(cartTotal)}</span>
                     </div>
                   </motion.div>
 
                   <p className="text-white/30 text-xs max-w-xs mx-auto leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>
-                    Show this receipt to the barista at our Soho flagship, or await delivery to your table.
+                    Kaapi Katha is a fictional café concept. No payment was taken and nothing will be delivered.
                   </p>
                 </div>
 
