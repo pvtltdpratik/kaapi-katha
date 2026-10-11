@@ -34,7 +34,7 @@ const passages = [
 
 export default function CoffeeStory() {
   return (
-    <section id="story" className="relative py-20 lg:py-24">
+    <section id="story" className="theme-yellow bg-ground text-fg relative py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-10">
         {passages.map((p, i) => (
           <div
@@ -49,9 +49,9 @@ export default function CoffeeStory() {
               variants={fadeUp}
               className={`w-full lg:w-[44%] ${i % 2 === 1 ? "lg:ml-auto" : ""}`}
             >
-              <h2 className="display text-3xl md:text-5xl text-[#efe6d6] mb-5">{p.title}</h2>
-              <p className="text-[#efe6d6]/65 text-base leading-relaxed max-w-md mb-8">{p.text}</p>
-              <div className={`overflow-hidden bg-[#1b1511] ${p.shape} ${p.align}`}>
+              <h2 className="display text-3xl md:text-5xl text-fg mb-5">{p.title}</h2>
+              <p className="text-fg/65 text-base leading-relaxed max-w-md mb-8">{p.text}</p>
+              <div className={`overflow-hidden bg-surface ${p.shape} ${p.align}`}>
                 <div
                   className="w-full h-full"
                   role="img"

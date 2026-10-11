@@ -20,7 +20,7 @@ export default function GallerySection() {
   const current = galleryData.find((g) => g.id === selected);
 
   return (
-    <section id="gallery" className="relative py-24 lg:py-32">
+    <section id="gallery" className="theme-yellow bg-ground text-fg relative py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:pl-[36%]">
         <motion.div
           initial="hidden"
@@ -35,7 +35,7 @@ export default function GallerySection() {
                 type="button"
                 onClick={() => setSelected(img.id)}
                 aria-label={`Enlarge: ${img.alt}`}
-                className={`relative overflow-hidden bg-[#1b1511] cursor-zoom-in ${layout[i] ?? "lg:col-span-3 aspect-[4/3]"} ${
+                className={`relative overflow-hidden bg-surface cursor-zoom-in ${layout[i] ?? "lg:col-span-3 aspect-[4/3]"} ${
                   i === 0 ? "col-span-2" : ""
                 }`}
               >
@@ -60,24 +60,24 @@ export default function GallerySection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[90] bg-[#14100d]/95 flex flex-col items-center justify-center p-6 cursor-zoom-out"
+            className="theme-espresso text-fg fixed inset-0 z-[90] bg-ground/95 flex flex-col items-center justify-center p-6 cursor-zoom-out"
             onClick={() => setSelected(null)}
             role="dialog"
             aria-modal="true"
             aria-label={current.alt}
           >
             <div
-              className="w-full max-w-4xl aspect-[16/10] bg-[#1b1511]"
+              className="w-full max-w-4xl aspect-[16/10] bg-surface"
               style={{
                 backgroundImage: `url(${current.src})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             />
-            <p className="mt-4 text-sm text-[#efe6d6]/70">{current.alt}</p>
+            <p className="mt-4 text-sm text-fg/70">{current.alt}</p>
             <button
               type="button"
-              className="absolute top-5 right-6 text-sm text-[#efe6d6]/80 hover:text-[#efe6d6] cursor-pointer"
+              className="absolute top-5 right-6 text-sm text-fg/80 hover:text-fg cursor-pointer"
               onClick={() => setSelected(null)}
             >
               Close

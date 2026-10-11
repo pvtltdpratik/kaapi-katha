@@ -8,7 +8,7 @@ export default function ToastContainer() {
 
   return (
     <div
-      className="fixed bottom-5 left-5 z-[100] flex flex-col gap-2 pointer-events-none max-w-xs w-[calc(100%-2.5rem)]"
+      className="theme-espresso fixed bottom-5 left-5 z-[100] flex flex-col gap-2 pointer-events-none max-w-xs w-[calc(100%-2.5rem)]"
       aria-live="polite"
     >
       <AnimatePresence>
@@ -18,7 +18,7 @@ export default function ToastContainer() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            className="pointer-events-auto flex items-center justify-between gap-4 px-4 py-3 bg-[#efe6d6] text-[#14100d] text-sm"
+            className="pointer-events-auto flex items-center justify-between gap-4 px-4 py-3 bg-fg text-ground text-sm"
           >
             <span>{toast.message}</span>
             <button

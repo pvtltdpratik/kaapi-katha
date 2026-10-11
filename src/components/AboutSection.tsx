@@ -5,12 +5,12 @@ import { fadeUp } from "@/lib/animations";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="relative py-24 lg:py-32">
+    <section id="about" className="theme-yellow bg-ground text-fg relative py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* left lane: the cup lands here on large screens; the photo covers small ones */}
         <div data-cup="about" className="lg:col-span-5 relative">
           <div
-            className="about-photo aspect-[4/5] bg-[#1b1511]"
+            className="about-photo aspect-[4/5] bg-surface"
             role="img"
             aria-label="Inside a busy café"
             style={{
@@ -29,10 +29,10 @@ export default function AboutSection() {
           variants={fadeUp}
           className="lg:col-span-6 lg:col-start-7"
         >
-          <h2 className="display text-4xl md:text-6xl text-[#efe6d6] mb-8">
+          <h2 className="display text-4xl md:text-6xl text-fg mb-8">
             A café that doesn&apos;t exist, built carefully.
           </h2>
-          <div className="space-y-5 text-[#efe6d6]/65 text-base leading-relaxed max-w-lg">
+          <div className="space-y-5 text-fg/65 text-base leading-relaxed max-w-lg">
             <p>
               Kaapi Katha is a made-up café: a study in filter coffee, steel tumblers and long
               conversations. It isn&apos;t a business and isn&apos;t affiliated with any brand.
@@ -44,9 +44,9 @@ export default function AboutSection() {
             </p>
           </div>
 
-          <p className="mt-12 text-sm text-[#efe6d6]/55">
+          <p className="mt-12 text-sm text-fg/55">
             Concept, design and development by{" "}
-            <span className="text-[#efe6d6]">Pratik Prashant Kolhe</span>.
+            <span className="text-fg">Pratik Prashant Kolhe</span>.
           </p>
         </motion.div>
       </div>
