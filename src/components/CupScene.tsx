@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { cupParams } from "@/lib/cupStore";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { CupBody, Liquid, StudioEnvironment, makeLiquidState, type LiquidState } from "./CupModel";
 
 /* ------------------------------------------------------------------ */
 /* Scroll choreography                                                 */
@@ -19,7 +18,6 @@ import { cupParams } from "@/lib/cupStore";
  *   rz     clockwise lean in degrees (negative leans to the right)
  *   rx     pitch towards the viewer (shows the coffee surface)
  *   ry     yaw / spin
- *   c      1 while the cup acts as the customizer's live preview
  *   lin    interpolate linearly into this key (used when the cup should move
  *          at exactly the page's own speed)
  */
@@ -34,7 +32,6 @@ interface KeyDef {
   rz: number;
   rx: number;
   ry: number;
-  c?: number;
   lin?: boolean;
   /** take x from the element's horizontal centre instead of `x` */
   anchorX?: boolean;
@@ -42,15 +39,17 @@ interface KeyDef {
 
 const DESKTOP_KEYS: KeyDef[] = [
   // hero: big, right of the headline, leaning clockwise
-  { sel: "#home", edge: "top", vp: 0, x: 0.5, y: 0.0, s: 1.0, rz: -13, rx: 20, ry: -30 },
+  { sel: "#home", edge: "top", vp: 0, x: 0.43, y: 0.0, s: 1.0, rz: -13, rx: 20, ry: -30 },
   // story: zig-zag opposite each text block
   { sel: '[data-cup="story-0"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.78, rz: -10, rx: 20, ry: 24 },
   { sel: '[data-cup="story-1"]', edge: "center", vp: 0.5, x: -0.55, y: 0, s: 0.78, rz: 10, rx: 20, ry: 168 },
   { sel: '[data-cup="story-2"]', edge: "center", vp: 0.5, x: 0.55, y: 0, s: 0.78, rz: -10, rx: 20, ry: 336 },
   // menu: right lane
   { sel: "#menu", edge: "center", vp: 0.5, x: 0.6, y: 0, s: 0.88, rz: -14, rx: 22, ry: 392 },
-  // customizer: lands in the live-preview slot and becomes the preview
-  { sel: "#cup-slot", edge: "center", vp: 0.5, x: -0.5, y: 0, s: 0.86, rz: -4, rx: 30, ry: 430, c: 1, anchorX: true },
+  // customizer: glides to the preview panel, then hands over to the panel's own
+  // scene (which shows the drink being prepared) by shrinking out
+  { sel: "#cup-slot", edge: "center", vp: 0.9, x: -0.5, y: 0, s: 0.8, rz: -4, rx: 26, ry: 430, anchorX: true },
+  { sel: "#cup-slot", edge: "center", vp: 0.62, x: -0.5, y: 0, s: 0.001, rz: -4, rx: 26, ry: 460, anchorX: true },
   // gallery: left lane
   { sel: "#gallery", edge: "center", vp: 0.5, x: -0.6, y: 0, s: 0.8, rz: 11, rx: 20, ry: 500 },
   // rituals: right lane
@@ -66,9 +65,6 @@ const DESKTOP_KEYS: KeyDef[] = [
 const MOBILE_KEYS: KeyDef[] = [
   { sel: "#home", edge: "top", vp: 0, x: 0, y: 0.5, s: 1.7, rz: -13, rx: 20, ry: -30 },
   { sel: "#home", edge: "bottom", vp: 0.15, x: 0, y: 1.6, s: 0.001, rz: -14, rx: 24, ry: 10 },
-  { sel: "#cup-slot", edge: "center", vp: 1.1, x: 0, y: -1.5, s: 0.001, rz: -4, rx: 30, ry: 300, c: 1 },
-  { sel: "#cup-slot", edge: "center", vp: 0.5, x: 0, y: 0, s: 1.35, rz: -6, rx: 30, ry: 400, c: 1, lin: true },
-  { sel: "#cup-slot", edge: "center", vp: -0.1, x: 0, y: 1.6, s: 0.001, rz: -6, rx: 30, ry: 470, c: 1, lin: true },
 ];
 
 interface ResolvedKey extends KeyDef {
@@ -101,153 +97,8 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
 const lerp = THREE.MathUtils.lerp;
 const DEG = Math.PI / 180;
 
-/* ------------------------------------------------------------------ */
-/* Procedural cup                                                      */
-/* ------------------------------------------------------------------ */
-
-function useCrema() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 512;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createRadialGradient(256, 256, 20, 256, 256, 256);
-    g.addColorStop(0, "#d9b184");
-    g.addColorStop(0.6, "#b8854f");
-    g.addColorStop(1, "#7a4d27");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 512, 512);
-    // a soft heart of microfoam
-    ctx.fillStyle = "rgba(255, 244, 226, 0.88)";
-    ctx.beginPath();
-    ctx.moveTo(256, 380);
-    ctx.bezierCurveTo(130, 300, 150, 175, 256, 215);
-    ctx.bezierCurveTo(362, 175, 382, 300, 256, 380);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(122, 77, 39, 0.55)";
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(256, 215);
-    ctx.lineTo(256, 392);
-    ctx.stroke();
-    const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 4;
-    return tex;
-  }, []);
-}
-
-const CUP_PROFILE: [number, number][] = [
-  [0.0, 0.0],
-  [0.5, 0.0],
-  [0.56, 0.03],
-  [0.58, 0.08],
-  [0.7, 0.35],
-  [0.85, 0.8],
-  [0.95, 1.25],
-  [0.97, 1.42],
-  [0.955, 1.455],
-  [0.925, 1.455],
-  [0.91, 1.43],
-  [0.9, 1.4],
-  [0.82, 0.95],
-  [0.68, 0.5],
-  [0.5, 0.22],
-  [0.0, 0.17],
-];
-
+/** pivot the cup about its visual centre (body + handle) */
 const CUP_CENTER = new THREE.Vector3(-0.25, -0.72, 0);
-
-function Cup({ coffeeRef }: { coffeeRef: React.RefObject<THREE.Mesh | null> }) {
-  const body = useMemo(
-    () =>
-      new THREE.LatheGeometry(
-        CUP_PROFILE.map(([x, y]) => new THREE.Vector2(x, y)),
-        96
-      ),
-    []
-  );
-  const handle = useMemo(
-    () =>
-      new THREE.TubeGeometry(
-        new THREE.CatmullRomCurve3([
-          new THREE.Vector3(0.8, 1.12, 0),
-          new THREE.Vector3(1.28, 1.2, 0),
-          new THREE.Vector3(1.54, 0.9, 0),
-          new THREE.Vector3(1.4, 0.52, 0),
-          new THREE.Vector3(0.6, 0.4, 0),
-        ]),
-        64,
-        0.085,
-        20,
-        false
-      ),
-    []
-  );
-  const crema = useCrema();
-
-  useEffect(
-    () => () => {
-      body.dispose();
-      handle.dispose();
-      crema.dispose();
-    },
-    [body, handle, crema]
-  );
-
-  return (
-    <group position={CUP_CENTER}>
-      <mesh geometry={body} castShadow receiveShadow>
-        <meshPhysicalMaterial
-          color="#ebe5d9"
-          roughness={0.22}
-          clearcoat={1}
-          clearcoatRoughness={0.08}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-      <mesh geometry={handle} castShadow receiveShadow>
-        <meshPhysicalMaterial
-          color="#ebe5d9"
-          roughness={0.22}
-          clearcoat={1}
-          clearcoatRoughness={0.08}
-        />
-      </mesh>
-      <mesh ref={coffeeRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 1.2, 0]} receiveShadow>
-        <circleGeometry args={[0.85, 72]} />
-        <meshPhysicalMaterial
-          map={crema}
-          roughness={0.55}
-          clearcoat={0.25}
-          clearcoatRoughness={0.4}
-          envMapIntensity={0.35}
-        />
-      </mesh>
-    </group>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Environment (procedural studio, nothing to download)                */
-/* ------------------------------------------------------------------ */
-
-function Environment() {
-  const gl = useThree((st) => st.gl);
-  const get = useThree((st) => st.get);
-  useEffect(() => {
-    const scene = get().scene;
-    const pmrem = new THREE.PMREMGenerator(gl);
-    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = env;
-    scene.environmentIntensity = 0.9;
-    return () => {
-      scene.environment = null;
-      env.dispose();
-      pmrem.dispose();
-    };
-  }, [gl, get]);
-  return null;
-}
 
 /* ------------------------------------------------------------------ */
 /* Rig: reads window.scrollY every frame and writes the transform      */
@@ -263,22 +114,16 @@ interface Pose {
   rz: number;
   rx: number;
   ry: number;
-  c: number;
 }
 
 function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolean }) {
   const root = useRef<THREE.Group>(null);
   const tilt = useRef<THREE.Group>(null);
   const spin = useRef<THREE.Group>(null);
-  const coffee = useRef<THREE.Mesh>(null);
   const keys = useRef<ResolvedKey[]>([]);
   const cur = useRef<Pose | null>(null);
-  const sizeSmooth = useRef(1);
-  const milkSmooth = useRef(0.45);
-  const tint = useMemo(
-    () => ({ dark: new THREE.Color("#4a3426"), light: new THREE.Color("#ffffff"), out: new THREE.Color() }),
-    []
-  );
+  // the hero cup is always a finished latte
+  const liquid = useRef<LiquidState>(makeLiquidState());
 
   // measure the page; re-measure whenever layout changes
   useEffect(() => {
@@ -329,7 +174,6 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
       rz: lerp(a.rz, b.rz, t),
       rx: lerp(a.rx, b.rx, t),
       ry: lerp(a.ry, b.ry, t),
-      c: lerp(a.c ?? 0, b.c ?? 0, t),
     };
 
     // --- critically damped follow: removes wheel-step jitter -------
@@ -355,21 +199,10 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
 
     const appear = reducedMotion ? 1 : 1 - Math.pow(1 - Math.min(fs.clock.elapsedTime / 1.4, 1), 3);
 
-    sizeSmooth.current += (cupParams.sizeScale - sizeSmooth.current) * k;
-    milkSmooth.current += (cupParams.milk - milkSmooth.current) * k;
-    const sizeMul = lerp(1, sizeSmooth.current, p.c);
-
     root.current.position.set(p.x * halfW, (p.y + bob) * halfH, 0);
-    root.current.scale.setScalar(Math.max(base * p.s * sizeMul * (0.9 + 0.1 * appear), 0.0001));
+    root.current.scale.setScalar(Math.max(base * p.s * (0.9 + 0.1 * appear), 0.0001));
     tilt.current.rotation.set(p.rx * DEG, 0, p.rz * DEG + sway, "ZXY");
     spin.current.rotation.y = p.ry * DEG + turn;
-
-    // coffee colour follows the cup builder only while it is the preview
-    const mat = coffee.current?.material as THREE.MeshPhysicalMaterial | undefined;
-    if (mat) {
-      tint.out.copy(tint.dark).lerp(tint.light, 0.15 + 0.6 * lerp(0.3, milkSmooth.current, p.c));
-      mat.color.copy(tint.out);
-    }
   });
 
   return (
@@ -393,7 +226,10 @@ function Rig({ mobile, reducedMotion }: { mobile: boolean; reducedMotion: boolea
       <group ref={root}>
         <group ref={tilt}>
           <group ref={spin}>
-            <Cup coffeeRef={coffee} />
+            <group position={CUP_CENTER}>
+              <CupBody />
+              <Liquid state={liquid} />
+            </group>
           </group>
         </group>
       </group>
@@ -431,7 +267,7 @@ export default function CupScene({
       }}
       aria-hidden
     >
-      <Environment />
+      <StudioEnvironment intensity={0.9} />
       <Rig mobile={mobile} reducedMotion={reducedMotion} />
     </Canvas>
   );

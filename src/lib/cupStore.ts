@@ -1,20 +1,12 @@
 /**
  * Tiny module-level bridge between DOM sections and the 3D cup.
  *
- * - `cupParams` is mutable and read inside the render loop, so changing it never
- *   triggers a React render.
- * - `mode` is observable (useSyncExternalStore) because the hero and customizer
- *   swap in static fallbacks when WebGL is unavailable.
+ * `mode` is observable (useSyncExternalStore) because the hero swaps in a static
+ * fallback, and CSS hides 2D stand-ins, when WebGL is unavailable.
  */
 
 export type CupMode = "pending" | "webgl" | "fallback";
 
-export const cupParams = {
-  /** multiplier applied while the cup sits in the customizer slot */
-  sizeScale: 1,
-  /** 0 = black coffee, 1 = very milky */
-  milk: 0.45,
-};
 
 let mode: CupMode = "pending";
 const listeners = new Set<() => void>();
