@@ -67,7 +67,25 @@ npm run build && npm start
 
 ## Credits
 
-Concept, design and development by Pratik Prashant Kolhe.
-This project originally began as a Starbucks-themed animated landing page by
-other contributors (see the Git history); it has since been re-themed and the
-hero rebuilt as a procedural 3D scene.
+Concept, design and development of Kaapi Katha by **Pratik Prashant Kolhe**
+([@pvtltdpratik](https://github.com/pvtltdpratik)).
+
+This project was built on top of an earlier Next.js animated landing page. That
+foundation was written by two other developers, and their work is credited here
+and in the Git history (each of those commits carries a `Co-authored-by`
+trailer naming them):
+
+- **Prajjwal Rai** ([@prajjwalrai28-hue](https://github.com/prajjwalrai28-hue)):
+  the original project scaffold and first version of the site (Feb 2026).
+- **Ayush08k** ([@Ayush08k](https://github.com/Ayush08k)): the shopping cart,
+  the first drink customizer, scroll-linked hero text, image optimisation and
+  font loading (Jun 2026).
+
+Since then the hero has been rebuilt as a procedural WebGL scene, the cup
+travels the page with scroll, the builder was rewritten as a layered
+transparent-glass preview with a preparation sequence, and the brand, copy,
+type and colour system were replaced.
+
+The Git author on the older commits was changed to the repository owner's
+account with the original developers kept as co-authors; file contents of those
+commits are unchanged.
